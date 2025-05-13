@@ -1,0 +1,31 @@
+version: "2"
+linters:
+  defaults: all
+  enable:
+    - gocritic
+    - gofmt
+    - goimports
+    - golint
+    - govet
+    - ineffassign
+    - misspell
+    - staticcheck
+    - typecheck
+
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+    - golines
+
+run:
+  timeout: 5m
+  relative-path-mode: gomod
+  issues-exit-code: 2
+  tests: false
+  allow-parallel-runners: true
+  allow-serial-runners: true
+  go: '1.24'
+  concurrency: 4

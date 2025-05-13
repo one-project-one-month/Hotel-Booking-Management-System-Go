@@ -1,0 +1,14 @@
+environment: development
+
+server:
+    host: 127.0.0.1
+    port: 8080
+
+postgres:
+    host: 127.0.0.1
+    port: 5432
+    user: postgres
+    password: 12345678
+    dbname: hotel_booking
+    sslmode: disable
+    timezone: Asia/Yangon
