@@ -33,7 +33,7 @@ func load(path string) (*viper.Viper, error) {
 	v.AddConfigPath(path)
 
 	if err := v.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("error reading config file, %v", err)
+		return nil, fmt.Errorf("errors reading config file, %v", err)
 	}
 
 	return v, nil
