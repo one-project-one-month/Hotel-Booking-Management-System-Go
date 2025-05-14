@@ -1,10 +1,11 @@
+// Package main is the entry point for the Hotel Booking Management System
 package main
 
 import (
-	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/user"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/user"
 )
 
 func main() {
