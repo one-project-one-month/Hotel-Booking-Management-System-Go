@@ -1,16 +1,13 @@
 version: "2"
 linters:
-  defaults: all
+  default: all
   enable:
     - gocritic
-    - gofmt
-    - goimports
-    - golint
+    - revive
     - govet
     - ineffassign
     - misspell
     - staticcheck
-    - typecheck
 
 formatters:
   enable:
@@ -27,5 +24,5 @@ run:
   tests: false
   allow-parallel-runners: true
   allow-serial-runners: true
-  go: '1.24'
+  go: "1.24"
   concurrency: 4
