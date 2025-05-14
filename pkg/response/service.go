@@ -13,6 +13,7 @@ var ErrConflict = errors.New("entity conflict")
 
 // ServiceResponse is a standardized response structure for internal service operations.
 type ServiceResponse struct {
+	AppID string
 	Data  interface{}
 	Error error
 }
