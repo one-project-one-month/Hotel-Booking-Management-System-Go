@@ -39,6 +39,10 @@ install:
 	@echo "Installing dependencies..."
 	go install github.com/air-verse/air@latest
 	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6
+	go install github.com/evilmartians/lefthook@latest
 	go mod tidy
+
+	@echo "Installing Git Pre Commit Hook"
+	lefthook install
 
 all: clean install lint test build
