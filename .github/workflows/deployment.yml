@@ -18,7 +18,7 @@ jobs:
       - name: Check Go Version
         run: go version
       - name: Testing
-        run: go test -v ./..
+        run: go test -v ./...
 
   building:
     name: Build & Push to Docker Hub
