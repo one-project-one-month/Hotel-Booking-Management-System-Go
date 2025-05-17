@@ -1,0 +1,37 @@
+### Local Environment
+@baseUrl = http://localhost:8080/api/v1/room
+
+### Get All Room
+GET {{baseUrl}}
+
+### Get Room By ID
+GET {{baseUrl}}/d8411fec-b658-47cd-8dab-e83644c7ed1f
+
+### Create Room
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "guestLimit": 12,
+  "imgURL": "https://www.novotellondonwest.co.uk/images/slider_superiorRooms2.jpg",
+  "price": 12.12,
+  "roomNo": "1083",
+  "status": "Available",
+  "type": "Deluxe"
+}
+
+### Update Room
+PATCH {{baseUrl}}/a4c114d9-a304-447b-ab53-322a458c2261
+Content-Type: application/json
+
+{
+  "guestLimit": 12,
+  "imgURL": "https://www.novotellondonwest.co.uk/images/slider_superiorRooms2.jpg",
+  "price": 1212,
+  "roomNo": "1083",
+  "status": "CheckedIn",
+  "type": "Deluxe"
+}
+
+### Delete Room By ID
+DELETE {{baseUrl}}/a4c114d9-a304-447b-ab53-322a458c2261

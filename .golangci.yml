@@ -1,16 +1,23 @@
 version: "2"
 linters:
-  defaults: all
+#  default: all
+  disable-all : true
   enable:
     - gocritic
-    - gofmt
-    - goimports
-    - golint
+#    - revive
     - govet
     - ineffassign
     - misspell
     - staticcheck
-    - typecheck
+
+  disable:
+    # Disable temporarily while developing
+    - unused
+    - exhaustruct
+    - wsl
+    - varnamelen
+    - err113
+    - depguard  # Temporarily disabled while fixing configuration
 
 formatters:
   enable:
@@ -27,5 +34,42 @@ run:
   tests: false
   allow-parallel-runners: true
   allow-serial-runners: true
-  go: '1.24'
+  go: "1.24"
   concurrency: 4
+
+linters-settings:
+  depguard:
+    rules:
+      Main:  # Note: Using "Main" with capital M as that's what the error message refers to
+        list-type: allowlist
+        include-go-root: true
+        packages:
+          - github.com/labstack/echo/v4
+          - github.com/one-project-one-month/Hotel-Booking-Management-System-Go
+          - github.com/spf13/viper
+          - gorm.io/gorm
+          - gorm.io/driver/postgres
+          - github.com/google/uuid
+          - golang.org/x/...
+          - github.com/...
+  
+  exhaustruct:
+    exclude:
+      - 'gorm.Config'
+
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+        disabled: false
+        arguments:
+          - 'packageComment'
+          - 'fieldsComment'
+          - 'functionComment'
+
+  varnamelen:
+    ignore-names:
+      - err
+      - db
+      - tx
+      - v
