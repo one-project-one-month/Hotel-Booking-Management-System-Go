@@ -55,6 +55,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploying to render
-        runs: echo "To Be Continued!"
+        run: echo "To Be Continued!"
 
 
