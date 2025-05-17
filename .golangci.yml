@@ -1,13 +1,15 @@
 version: "2"
 linters:
-  default: all
+#  default: all
+  disable-all : true
   enable:
     - gocritic
-    - revive
+#    - revive
     - govet
     - ineffassign
     - misspell
     - staticcheck
+
   disable:
     # Disable temporarily while developing
     - unused

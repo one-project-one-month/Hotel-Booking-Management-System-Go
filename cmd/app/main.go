@@ -4,14 +4,40 @@ package main
 import (
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/room"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/user"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/postgres"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/requestValidator"
 )
 
 func main() {
 	app := echo.New()
+	app.Validator = &requestValidator.CustomValidator{Validator: validator.New()}
+	configData, err := config.New(".")
+	if err != nil {
+		app.Logger.Fatal(err)
+	}
+	db, err := postgres.New(&configData.Postgres)
+	if err != nil {
+		app.Logger.Fatal(err)
+	}
+	err = db.AutoMigrate(&models.Room{})
+	if err != nil {
+		app.Logger.Fatal(err)
+	}
+
+	err = room.Seed(db)
+	if err != nil {
+		app.Logger.Fatal(err)
+	}
 
 	user.Run(app)
+
+	room.Run(app, db)
 
 	app.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Welcome to Hotel Booking System APIs")
