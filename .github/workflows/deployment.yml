@@ -36,7 +36,7 @@ jobs:
           password: ${{secrets.DOCKERHUB_PASSWORD}}
       - name: Replace Config Values for Production
         run: |
-          sed -i 's/host: hbms_db/host: ${{vars.DB_HOST}}/' config.yml
+          sed -i 's/host: 127.0.0.1/host: ${{vars.DB_HOST}}/' config.yml
           sed -i 's/user: postgres/user: ${{vars.DB_USER}}/' config.yml
           sed -i 's/password: 12345678/password: ${{ secrets.DB_PASSWORD }}/' config.yml
           sed -i 's/dbname: hotel_booking/dbname: ${{vars.DB_NAME}}/' config.yml
