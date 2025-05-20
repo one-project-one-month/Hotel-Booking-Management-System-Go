@@ -5,8 +5,12 @@ import (
 	"gorm.io/gorm"
 )
 
-// Entry Point For Room Feature
+// Run Entry Point For Room Feature
 func Run(e *echo.Echo, db *gorm.DB) {
+	if err := Seed(db); err != nil {
+		e.Logger.Fatal(err)
+	}
+
 	repo := newRepository(db)
 	service := newService(repo)
 	handler := newHandler(service)

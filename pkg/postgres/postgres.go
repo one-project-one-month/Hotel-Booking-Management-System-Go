@@ -3,6 +3,8 @@ package postgres
 
 import (
 	"fmt"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
+	"log"
 
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
 	"gorm.io/driver/postgres"
@@ -16,6 +18,11 @@ func New(cfg *config.Postgres) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
+	}
+
+	err = db.AutoMigrate(&models.Room{})
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return db, nil

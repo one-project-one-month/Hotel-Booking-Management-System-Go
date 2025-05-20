@@ -9,7 +9,6 @@ import (
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/room"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/user"
-	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/postgres"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/requestValidator"
 )
@@ -22,15 +21,6 @@ func main() {
 		app.Logger.Fatal(err)
 	}
 	db, err := postgres.New(&configData.Postgres)
-	if err != nil {
-		app.Logger.Fatal(err)
-	}
-	err = db.AutoMigrate(&models.Room{})
-	if err != nil {
-		app.Logger.Fatal(err)
-	}
-
-	err = room.Seed(db)
 	if err != nil {
 		app.Logger.Fatal(err)
 	}
