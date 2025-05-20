@@ -11,4 +11,8 @@ func Run(app *echo.Echo, db *gorm.DB) {
 	handler := &Handler{service: service}
 
 	app.POST("/api/v1/coupons", handler.create)
+	app.GET("/api/v1/coupons", handler.findList)
+	app.GET("/api/v1/coupons/:id", handler.findByID)
+	app.PATCH("/api/v1/coupons/:id", handler.update)
+	app.DELETE("/api/v1/coupons/:id", handler.delete)
 }

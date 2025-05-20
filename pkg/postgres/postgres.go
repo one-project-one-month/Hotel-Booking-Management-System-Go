@@ -3,8 +3,9 @@ package postgres
 
 import (
 	"fmt"
-	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
 	"log"
+
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
 
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
 	"gorm.io/driver/postgres"
