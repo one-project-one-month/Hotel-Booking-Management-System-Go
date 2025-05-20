@@ -1,6 +1,70 @@
 package user
 
-// Service handles business logic for user operations.
+import (
+	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
+)
+
+// Service
 type Service struct {
-	repo *Repository // Will be implemented in future releases
+	repo *Repository
+}
+
+func newService(repo *Repository) *Service {
+	return &Service{repo: repo}
+}
+
+func (s *Service) findAllUsers() ([]ResponseUserDto, error) {
+	users, err := s.repo.findAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+func (s *Service) getUserByID(id uuid.UUID) (*ResponseUserDto, error) {
+	user, err := s.repo.findByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *Service) createUser(userDto *CreateUserDto) (*ResponseUserDto, error) {
+	newUser, err := mapStruct(&models.User{}, userDto)
+	if err != nil {
+		return nil, err
+	}
+	createdUser, err := s.repo.create(newUser)
+	if err != nil {
+		return nil, err
+	}
+
+	return createdUser, nil
+}
+
+func (s *Service) updateUser(userDto *UpdateUserDto, id uuid.UUID) (*ResponseUserDto, error) {
+	newUser, err := mapStruct(&models.User{}, userDto)
+	user, err := s.repo.update(newUser, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *Service) deleteUserByID(id uuid.UUID) error {
+	err := s.repo.delete(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func mapStruct[T any](to *T, from any) (*T, error) {
+	err := copier.Copy(&to, from)
+	return to, err
 }

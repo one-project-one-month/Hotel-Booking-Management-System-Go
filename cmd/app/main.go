@@ -25,18 +25,22 @@ func main() {
 	if err != nil {
 		app.Logger.Fatal(err)
 	}
-	err = db.AutoMigrate(&models.Room{})
+	err = db.AutoMigrate(&models.Room{}, &models.User{})
 	if err != nil {
 		app.Logger.Fatal(err)
 	}
 
-	err = room.Seed(db)
+	if err := user.Seed(db); err != nil {
+		app.Logger.Fatal(err)
+	}
+	if err := room.Seed(db); err != nil {
+		app.Logger.Fatal(err)
+	}
 	if err != nil {
 		app.Logger.Fatal(err)
 	}
 
-	user.Run(app)
-
+	user.Run(app, db)
 	room.Run(app, db)
 
 	app.GET("/", func(c echo.Context) error {
