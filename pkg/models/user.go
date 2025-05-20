@@ -13,6 +13,7 @@ type User struct {
 	ID        uuid.UUID `gorm:"primaryKey;type:uuid"`
 	Name      string    `gorm:"not null"`
 	Email     string    `gorm:"unique;not null"`
+	Coupons   []Coupon
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt

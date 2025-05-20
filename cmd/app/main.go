@@ -2,6 +2,7 @@
 package main
 
 import (
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/coupon"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -28,6 +29,7 @@ func main() {
 	user.Run(app)
 
 	room.Run(app, db)
+	coupon.Run(app, db)
 
 	app.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Welcome to Hotel Booking System APIs")

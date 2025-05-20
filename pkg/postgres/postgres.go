@@ -20,7 +20,7 @@ func New(cfg *config.Postgres) (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	err = db.AutoMigrate(&models.Room{})
+	err = db.AutoMigrate(&models.Room{}, &models.Coupon{})
 	if err != nil {
 		log.Fatal(err)
 	}
