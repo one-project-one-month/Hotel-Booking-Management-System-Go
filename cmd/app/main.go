@@ -2,9 +2,8 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/coupon"
+	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -27,8 +26,7 @@ func main() {
 		app.Logger.Fatal(err)
 	}
 
-	user.Run(app)
-
+	user.Run(app, db)
 	room.Run(app, db)
 	coupon.Run(app, db)
 
