@@ -83,7 +83,6 @@ func (h *Handler) createRoom(ctx echo.Context) error {
 	})
 }
 
-
 func (h *Handler) updateUser(ctx echo.Context) error {
 	id := ctx.Param("id")
 	userUUID, err := uuid.Parse(id)
@@ -121,7 +120,6 @@ func (h *Handler) updateUser(ctx echo.Context) error {
 	})
 }
 
-
 func (h *Handler) deleteUser(ctx echo.Context) error {
 	id := ctx.Param("id")
 	userUUID, err := uuid.Parse(id)
@@ -138,4 +136,8 @@ func (h *Handler) deleteUser(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusNoContent, &response.HTTPSuccessResponse{})
+}
+
+func (h *Handler) findCouponsByUserID(ctx echo.Context) error {
+	return nil
 }

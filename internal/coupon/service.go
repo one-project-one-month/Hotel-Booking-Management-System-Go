@@ -84,6 +84,21 @@ func (s *Service) findByID(id string) *response.ServiceResponse {
 	}
 }
 
+func (s *Service) findByUserID(userId string) *response.ServiceResponse {
+	coupons, err := s.repo.findByUserID(userId)
+	if err != nil {
+		return &response.ServiceResponse{
+			AppID: "CouponService",
+			Error: response.ErrNotFound,
+		}
+	}
+
+	return &response.ServiceResponse{
+		AppID: "CouponService",
+		Data:  coupons,
+	}
+}
+
 func (s *Service) update(id string, coupon *UpdateCouponDto) *response.ServiceResponse {
 	couponModel, err := s.repo.findByID(id)
 	if err != nil {

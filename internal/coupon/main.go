@@ -2,10 +2,11 @@ package coupon
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
 	"gorm.io/gorm"
 )
 
-func Run(app *echo.Echo, db *gorm.DB) {
+func Run(app *echo.Echo, db *gorm.DB, queue *mq.MQ) {
 	repo := &Repository{database: db}
 	service := &Service{repo: repo}
 	handler := &Handler{service: service}

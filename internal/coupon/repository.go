@@ -36,6 +36,15 @@ func (r *Repository) findByCode(code string) (*models.Coupon, error) {
 	return nil, nil
 }
 
+func (r *Repository) findByUserID(userId string) ([]models.Coupon, error) {
+	var coupons []models.Coupon
+	if err := r.database.Where("user_id = ?", userId).Find(&coupons).Error; err != nil {
+		return nil, err
+	}
+
+	return coupons, nil
+}
+
 func (r *Repository) update(id string, coupon *models.Coupon) error {
 	return r.database.Model(coupon).Where("id = ?", id).Updates(coupon).Error
 }

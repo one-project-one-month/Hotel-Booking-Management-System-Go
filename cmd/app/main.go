@@ -2,37 +2,42 @@
 package main
 
 import (
-	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/coupon"
-	"net/http"
-
-	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/coupon"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/room"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/user"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/postgres"
-	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/requestValidator"
+	"log"
+	"net/http"
+	"sync"
 )
 
 func main() {
-	app := echo.New()
-	app.Validator = &requestValidator.CustomValidator{Validator: validator.New()}
-	configData, err := config.New(".")
+	cfg, err := config.New(".")
 	if err != nil {
-		app.Logger.Fatal(err)
-	}
-	db, err := postgres.New(&configData.Postgres)
-	if err != nil {
-		app.Logger.Fatal(err)
+		log.Fatal(err)
 	}
 
-	user.Run(app, db)
-	room.Run(app, db)
-	coupon.Run(app, db)
+	db, err := postgres.New(&cfg.Postgres)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	app.GET("/", func(c echo.Context) error {
+	var wg sync.WaitGroup
+	app := NewApp(&wg, cfg)
+
+	queue := mq.New(&wg, 100)
+	user.Run(app.echo, db)
+	room.Run(app.echo, db)
+	coupon.Run(app.echo, db, queue)
+
+	app.echo.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Welcome to Hotel Booking System APIs")
 	})
 
-	app.Logger.Fatal(app.Start(":8080"))
+	app.start()
+
+	wg.Wait()
 }
