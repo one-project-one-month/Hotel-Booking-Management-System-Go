@@ -110,12 +110,28 @@ func (s *Service) update(id string, coupon *UpdateCouponDto) *response.ServiceRe
 	}
 
 	if coupon.Method == "claim" {
+		if couponModel.IsClaimed {
+			return &response.ServiceResponse{
+				AppID:   "CouponService",
+				Error:   response.ErrBadRequest,
+				Message: "Coupon is already claimed",
+			}
+		}
 		couponModel.IsClaimed = true
 	}
 
 	if coupon.Method == "activate" {
+		if couponModel.IsClaimed {
+			return &response.ServiceResponse{
+				AppID:   "CouponService",
+				Error:   response.ErrBadRequest,
+				Message: "Coupon is already activated",
+			}
+		}
 		couponModel.IsActive = true
 	}
+
+	couponModel.UserID = coupon.Data.UserID
 
 	if err := s.repo.update(id, couponModel); err != nil {
 		return &response.ServiceResponse{

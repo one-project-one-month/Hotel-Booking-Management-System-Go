@@ -14,9 +14,13 @@ var ErrConflict = errors.New("entity conflict")
 // ErrTimeout represents an error when the operation is timeout.
 var ErrTimeout = errors.New("operation timeout")
 
+// ErrBadRequest represents an error when the user operate invalid data
+var ErrBadRequest = errors.New("bad request")
+
 // ServiceResponse is a standardized response structure for internal service operations.
 type ServiceResponse struct {
-	AppID string      `json:"app_id"`
-	Data  interface{} `json:"data"`
-	Error error       `json:"error"`
+	AppID   string      `json:"app_id"`
+	Data    interface{} `json:"data"`
+	Error   error       `json:"error"`
+	Message string      `json:"message"`
 }

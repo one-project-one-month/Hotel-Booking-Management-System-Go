@@ -1,6 +1,7 @@
 package coupon
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -117,15 +118,34 @@ func (h *Handler) update(c echo.Context) error {
 		})
 	}
 
-	if resp := h.service.update(id.String(), &coupon); resp.Error != nil {
-		return c.JSON(http.StatusInternalServerError, response.HTTPErrorResponse{
+	if err := c.Validate(coupon.Data); err != nil {
+		return c.JSON(http.StatusBadRequest, response.HTTPErrorResponse{
+			Message: err.Error(),
+		})
+	}
+
+	resp := h.service.update(id.String(), &coupon)
+	if resp.Error != nil {
+		if errors.Is(resp.Error, response.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
+				Message: resp.Error.Error(),
+			})
+		}
+
+		if errors.Is(resp.Error, response.ErrBadRequest) {
+			return c.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
+				Message: resp.Message,
+			})
+		}
+
+		return c.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
 			Message: "Failed to update coupon",
-			Error:   resp.Error,
 		})
 	}
 
 	return c.JSON(http.StatusOK, response.HTTPSuccessResponse{
 		Message: "Coupon updated successfully",
+		Data:    resp.Data,
 	})
 }
 
