@@ -28,7 +28,7 @@ func Seed(db *gorm.DB) error {
 		users[i] = models.User{
 			Name:        fmt.Sprintf("User %d", seq),
 			Email:       fmt.Sprintf("user%d@example.com", seq),
-			PhoneNumber: fmt.Sprintf("+1%010d", 2000000000+seq), // Generate unique US phone numbers
+			PhoneNumber: fmt.Sprintf("+1%010d", 2000000000+seq),      // Generate unique US phone numbers
 			Password:    "$2a$10$prehashedpassword1234567890abcdefg", // Should be properly hashed in production
 			Role:        models.RoleUser,
 			ImgURL:      fmt.Sprintf("https://example.com/avatars/user%d.jpg", seq),

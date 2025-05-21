@@ -5,11 +5,22 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/events"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/response"
 )
 
 type Handler struct {
 	service *Service
+	queue   *mq.MQ
+}
+
+func newHandler(service *Service, queue *mq.MQ) *Handler {
+	handler := &Handler{service: service, queue: queue}
+
+	queue.Subscribe(events.COUPONFETCHED, handler.findByUserID)
+
+	return handler
 }
 
 func (h *Handler) create(c echo.Context) error {
@@ -136,4 +147,9 @@ func (h *Handler) delete(c echo.Context) error {
 	return c.JSON(http.StatusOK, response.HTTPSuccessResponse{
 		Message: "Coupon deleted successfully",
 	})
+}
+
+func (h *Handler) findByUserID(data any) any {
+	dto := data.(events.FindByUserIdDto)
+	return h.service.findByUserID(dto.UserID)
 }

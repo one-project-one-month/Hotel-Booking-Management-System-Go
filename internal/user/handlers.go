@@ -2,19 +2,23 @@ package user
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/events"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/response"
 )
 
 // Handler manages HTTP requests for user operations.
 type Handler struct {
+	queue   *mq.MQ
 	service *Service // Will be implemented in future releases
 }
 
-func newHandler(service *Service) *Handler {
-	return &Handler{service: service}
+func newHandler(service *Service, queue *mq.MQ) *Handler {
+	return &Handler{service: service, queue: queue}
 }
 
 func (h *Handler) findAllUsers(ctx echo.Context) error {
@@ -139,5 +143,36 @@ func (h *Handler) deleteUser(ctx echo.Context) error {
 }
 
 func (h *Handler) findCouponsByUserID(ctx echo.Context) error {
-	return nil
+	id := ctx.Param("id")
+	userID, err := uuid.Parse(id)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
+			Message: "Invalid ID!",
+		})
+	}
+
+	reply := h.queue.Publish(&mq.Message{
+		AppID: "UserService",
+		Topic: events.COUPONFETCHED,
+		Data:  events.FindByUserIdDto{UserID: userID.String()},
+	})
+
+	select {
+	case resp := <-reply:
+		data := resp.(*response.ServiceResponse)
+		if data.Error == nil {
+			return ctx.JSON(http.StatusOK, &response.HTTPSuccessResponse{
+				Message: "Fetch Coupons Success!",
+				Data:    data.Data,
+			})
+		}
+	case <-time.Tick(1 * time.Second):
+		return ctx.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
+			Message: "Timeout!",
+		})
+	}
+
+	return ctx.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
+		Message: "Fetch Coupons Failed!",
+	})
 }

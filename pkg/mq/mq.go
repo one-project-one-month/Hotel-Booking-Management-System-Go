@@ -23,8 +23,13 @@ func (mq *MQ) Start() {
 }
 
 // Publish sends a message to the message queue.
-func (mq *MQ) Publish(message *Message) {
-	mq.queue <- message
+func (mq *MQ) Publish(message *Message) chan any {
+	reply := make(chan any)
+	go func() {
+		message.ReplyTo = reply
+		mq.queue <- message
+	}()
+	return reply
 }
 
 // Subscribe registers a subscriber function to process messages for a specific topic.

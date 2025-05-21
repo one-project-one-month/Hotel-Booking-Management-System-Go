@@ -2,6 +2,10 @@
 package main
 
 import (
+	"log"
+	"net/http"
+	"sync"
+
 	"github.com/labstack/echo/v4"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/coupon"
@@ -9,9 +13,6 @@ import (
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/user"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/postgres"
-	"log"
-	"net/http"
-	"sync"
 )
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
 	app := NewApp(&wg, cfg)
 
 	queue := mq.New(&wg, 100)
-	user.Run(app.echo, db)
+	user.Run(app.echo, db, queue)
 	room.Run(app.echo, db)
 	coupon.Run(app.echo, db, queue)
 

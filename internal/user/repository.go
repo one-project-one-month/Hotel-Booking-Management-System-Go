@@ -69,4 +69,3 @@ func (r *Repository) delete(id uuid.UUID) error {
 	}
 	return nil
 }
-

@@ -25,7 +25,11 @@ func (b *broker) deliver(msg *Message) {
 		for _, subscriber := range subscribers {
 			b.wg.Add(1)
 			go func() {
-				defer b.wg.Done()
+				defer func() {
+					b.wg.Done()
+					close(msg.ReplyTo)
+				}()
+
 				resp := subscriber(msg.Data)
 				msg.ReplyTo <- resp
 			}()

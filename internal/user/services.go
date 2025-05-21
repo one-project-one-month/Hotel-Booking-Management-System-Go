@@ -23,6 +23,7 @@ func (s *Service) findAllUsers() ([]ResponseUserDto, error) {
 
 	return users, nil
 }
+
 func (s *Service) getUserByID(id uuid.UUID) (*ResponseUserDto, error) {
 	user, err := s.repo.findByID(id)
 	if err != nil {

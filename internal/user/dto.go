@@ -1,10 +1,11 @@
 package user
 
 import (
-	"github.com/google/uuid"
-	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
 )
 
 type CreateUserDto struct {
