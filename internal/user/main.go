@@ -11,7 +11,6 @@ import (
 // Run configures and sets up user routes in the provided Echo instance.
 func Run(e *echo.Echo, db *gorm.DB, queue *mq.MQ, cfg *config.Config) {
 	if cfg.Environment == "development" {
-
 		if err := Seed(db); err != nil {
 			e.Logger.Fatal(err)
 		}
