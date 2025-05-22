@@ -13,7 +13,7 @@ import (
 )
 
 // New creates a new PostgreSQL database connection using the provided configuration.
-func New(cfg *config.Postgres) (*gorm.DB, error) {
+func New(cfg *config.Postgres, env string) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=%s",
 		cfg.Host, cfg.User, cfg.Password, cfg.DbName, cfg.Port, cfg.SslMode, cfg.TimeZone)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -21,9 +21,12 @@ func New(cfg *config.Postgres) (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	err = db.AutoMigrate(&models.User{}, &models.Room{}, &models.Coupon{})
-	if err != nil {
-		log.Fatal(err)
+	if env == "development" {
+
+		err = db.AutoMigrate(&models.User{}, &models.Room{}, &models.Coupon{})
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return db, nil

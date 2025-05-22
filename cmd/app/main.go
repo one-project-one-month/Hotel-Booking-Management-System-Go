@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db, err := postgres.New(&cfg.Postgres)
+	db, err := postgres.New(&cfg.Postgres, &cfg.Environment)
 	if err != nil {
 		log.Fatal(err)
 	}
