@@ -46,7 +46,6 @@ jobs:
           password: ${{secrets.DOCKERHUB_PASSWORD}}
       - name: Replace Config Values for Production
         run: |
-          sed -i 's/environment: development/environment: ${{vars.ENV}}/' config.yml
           sed -i 's/host: 127.0.0.1/host: ${{vars.DB_HOST}}/' config.yml
           sed -i 's/port: 5432/port: ${{vars.PORT}}/' config.yml
           sed -i 's/user: postgres/user: ${{vars.DB_USER}}/' config.yml
