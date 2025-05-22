@@ -51,7 +51,7 @@ jobs:
           sed -i 's/user: postgres/user: ${{vars.DB_USER}}/' config.yml
           sed -i 's/password: 12345678/password: ${{ secrets.DB_PASSWORD }}/' config.yml
           sed -i 's/dbname: hotel_booking/dbname: ${{vars.DB_NAME}}/' config.yml
-          sed -i 's/sslmode: disable/dbname: ${{vars.SSL_MODE}}/' config.yml
+          sed -i 's/sslmode: disable/sslmode: ${{vars.SSL_MODE}}/' config.yml
       - name: Check Replacement
         run: cat config.yml
       - name : Build & Push to registry
