@@ -22,6 +22,9 @@ test:
 format:
 	@echo "Formating the code..."
 	go fmt ./...
+	gofumpt -l -w .
+	golines ./..
+
 
 .PHONY: lint
 lint:
@@ -37,8 +40,14 @@ clean:
 .PHONY: install
 install:
 	@echo "Installing dependencies..."
+	go install mvdan.cc/gofumpt@latest
+	go install github.com/segmentio/golines@latest
 	go install github.com/air-verse/air@latest
 	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.1.6
+	go install github.com/evilmartians/lefthook@latest
 	go mod tidy
+
+	@echo "Installing Git Pre Commit Hook"
+	lefthook install
 
 all: clean install lint test build
