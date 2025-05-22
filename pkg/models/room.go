@@ -9,16 +9,16 @@ import (
 
 // Gorm Model
 type Room struct {
-	ID          uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-	RoomNo      string    `gorm:"not null;unique"`
-	Type        string    `gorm:"not null"`
-	Price       float64   `gorm:"not null"`
-	Status      string    `gorm:"not null"`
-	IsFeatured  bool      `gorm:"default:false"`
-	Description string    `gorm:"type:text"`
-	ImgURL      string    `gorm:"type:text"`
-	GuestLimit  int       `gorm:"not null"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   gorm.DeletedAt
+	ID         uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	RoomNo     int       `gorm:"not null;unique"`
+	Type       string    `gorm:"not null"`
+	Price      float64   `gorm:"not null"`
+	Status     string    `gorm:"not null"`
+	IsFeatured bool      `gorm:"default:false"`
+	Details    string    `gorm:"type:text"`
+	ImgURL     string    `gorm:"type:text"`
+	GuestLimit int       `gorm:"not null"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt
 }

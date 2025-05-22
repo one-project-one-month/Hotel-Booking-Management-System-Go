@@ -1,6 +1,9 @@
 package room
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
@@ -34,11 +37,12 @@ func (s *Service) getRoomByID(id uuid.UUID) (*models.Room, error) {
 }
 
 func (s *Service) createRoom(roomDto *RequestRoomDto) (uuid.UUID, error) {
-	newRoom, err := mapStruct(&models.Room{}, roomDto)
+	room := &models.Room{}
+	err := MapRequestDtoToRoom(roomDto, room)
 	if err != nil {
 		return uuid.Nil, err
 	}
-	newRoomID, err := s.repo.create(newRoom)
+	newRoomID, err := s.repo.create(room)
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -67,4 +71,26 @@ func (s *Service) updateRoom(roomDto *RequestRoomDto, id uuid.UUID) (*models.Roo
 func mapStruct[T any](to *T, from any) (*T, error) {
 	err := copier.Copy(&to, from)
 	return to, err
+}
+
+func MapRequestDtoToRoom(dto *RequestRoomDto, room *models.Room) error {
+	detailsJSON, err := json.Marshal(dto.Details)
+	if err != nil {
+		return fmt.Errorf("failed to marshal details: %w", err)
+	}
+
+	imgURLJSON, err := json.Marshal(dto.ImgURL)
+	if err != nil {
+		return fmt.Errorf("failed to marshal imgURL: %w", err)
+	}
+
+	room.RoomNo = dto.RoomNo
+	room.Type = dto.Type
+	room.Price = dto.Price
+	room.Status = dto.Status
+	room.IsFeatured = dto.IsFeatured
+	room.Details = string(detailsJSON)
+	room.ImgURL = string(imgURLJSON)
+	room.GuestLimit = dto.GuestLimit
+	return nil
 }
