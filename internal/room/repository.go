@@ -48,7 +48,8 @@ func (r *Repository) update(updatedRoom *RequestRoomDto, id uuid.UUID) (*models.
 	if err != nil {
 		return nil, err
 	}
-	err = r.db.Model(&room).Updates(updatedRoom).Error
+	err = MapRequestDtoToRoom(updatedRoom, &room)
+	err = r.db.Save(&room).Error
 	if err != nil {
 		return nil, err
 	}
