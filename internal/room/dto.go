@@ -20,7 +20,7 @@ type ResponseRoomDto struct {
 	Price      float64   `json:"price"`
 	Status     string    `json:"status"`
 	IsFeatured bool      `json:"isFeatured"`
-	Details    string    `json:"description"`
+	Details    string    `json:"details"`
 	ImgURL     string    `json:"imgUrl"`
 	GuestLimit int       `json:"guestLimit"`
 }
