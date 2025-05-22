@@ -19,11 +19,11 @@ jobs:
         run: go version
       - name: Set up Postgres DB for testing
         uses: ikalnytskyi/action-setup-postgres@v7
-          with:
-            username: postgres
-            password: 12345678
-            database: hotel_booking
-            port: 5432
+        with:
+          username: postgres
+          password: 12345678
+          database: hotel_booking
+          port: 5432
       - name: Testing
         run: go test -v ./...
 
@@ -65,10 +65,10 @@ jobs:
     steps:
       - name: Deploy to Render
         uses: gh-actions-workflows/deploy-docker-render@v1.1
-          with:
-            deploy-hook: ${{ secrets.RENDER_DEPLOY_HOOK }}
-            image-url: ${{vars.DOCKERHUB_USERNAME}}/hbms:${{github.sha}}
-            render-api-key: ${{ secrets.RENDER_API_KEY }}
-            wait-for-deployment: true
+        with:
+          deploy-hook: ${{ secrets.RENDER_DEPLOY_HOOK }}
+          image-url: ${{vars.DOCKERHUB_USERNAME}}/hbms:${{github.sha}}
+          render-api-key: ${{ secrets.RENDER_API_KEY }}
+          wait-for-deployment: true
 
 
