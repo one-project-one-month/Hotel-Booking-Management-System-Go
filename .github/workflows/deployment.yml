@@ -24,6 +24,9 @@ jobs:
           password: 12345678
           database: hotel_booking
           port: 5432
+      - name: Install uuid4 in postgres server
+        run: |
+          psql postgresql://postgres:12345678@localhost:5432/hotel_booking -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
       - name: Testing
         run: go test -v ./...
 
