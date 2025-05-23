@@ -14,7 +14,7 @@ type CreateUserDto struct {
 	PhoneNumber string `json:"phoneNumber" validate:"required,e164"` // Added e164 validation
 	Password    string `json:"password" validate:"required,min=8"`   // Added min length
 	Role        string `json:"role" validate:"required,oneof=user admin"`
-	ImgURL      string `json:"imgUrl,omitempty" validate:"omitempty,url"`
+	ImageURL    string `json:"imageUrl,omitempty" validate:"omitempty,url"`
 }
 
 type UpdateUserDto struct {
@@ -23,7 +23,7 @@ type UpdateUserDto struct {
 	PhoneNumber *string `json:"phoneNumber,omitempty" validate:"omitempty,e164"`
 	Password    *string `json:"password,omitempty" validate:"omitempty,min=8"`
 	Role        *string `json:"role,omitempty" validate:"omitempty,oneof=user admin"`
-	ImgURL      *string `json:"imgUrl,omitempty" validate:"omitempty,url"`
+	ImageURL    *string `json:"imageUrl,omitempty" validate:"omitempty,url"`
 }
 
 type ResponseUserDto struct {
@@ -32,12 +32,12 @@ type ResponseUserDto struct {
 	Email       string     `json:"email"`
 	PhoneNumber string     `json:"phoneNumber"`
 	Role        string     `json:"role"`
-	ImgURL      string     `json:"imgUrl,omitempty"`
+	ImageUrl    string     `json:"imageUrl"`
 	Points      int        `json:"points"`
 	Amount      int        `json:"amount"`
 	CreatedAt   time.Time  `json:"createdAt"`
 	UpdatedAt   time.Time  `json:"updatedAt"`
-	DeletedAt   *time.Time `json:"deletedAt,omitempty"`
+	DeletedAt   *time.Time `json:"deletedAt"`
 }
 
 func NewResponseDtoFromModel(user *models.User) ResponseUserDto {
@@ -52,7 +52,7 @@ func NewResponseDtoFromModel(user *models.User) ResponseUserDto {
 		Email:       user.Email,
 		PhoneNumber: user.PhoneNumber,
 		Role:        strings.ToLower(user.Role.String()), // Ensure consistent case
-		ImgURL:      user.ImgURL,
+		ImageUrl:    user.ImageURL,
 		Points:      user.Points,
 		Amount:      user.Amount,
 		CreatedAt:   user.CreatedAt,

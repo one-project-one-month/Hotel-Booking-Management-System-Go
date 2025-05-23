@@ -1,6 +1,11 @@
 package room
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
+)
 
 type RequestRoomDto struct {
 	RoomNo      string  `json:"roomNo"      validate:"required,alphanum,max=20"`
@@ -19,8 +24,29 @@ type ResponseRoomDto struct {
 	Type        string    `json:"type"`
 	Price       float64   `json:"price"`
 	Status      string    `json:"status"`
-	IsFeatured  string    `json:"isFeatured"`
+	IsFeatured  bool      `json:"isFeatured"`
 	Description string    `json:"description"`
 	ImgURL      string    `json:"imgUrl"`
 	GuestLimit  int       `json:"guestLimit"`
+	DeletedAt   *time.Time
+}
+
+func NewResponseDtoFromModel(room *models.Room) ResponseRoomDto {
+	var deletedAt *time.Time
+	if room.DeletedAt.Valid {
+		deletedAt = &room.DeletedAt.Time
+	}
+
+	return ResponseRoomDto{
+		ID:          room.ID,
+		RoomNo:      room.RoomNo,
+		Type:        room.Type,
+		Price:       room.Price,
+		Status:      room.Status,
+		IsFeatured:  room.IsFeatured,
+		Description: room.Description,
+		ImgURL:      room.ImgURL,
+		GuestLimit:  room.GuestLimit,
+		DeletedAt:   deletedAt,
+	}
 }

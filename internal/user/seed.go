@@ -31,7 +31,7 @@ func Seed(db *gorm.DB) error {
 			PhoneNumber: fmt.Sprintf("+1%010d", 2000000000+seq),      // Generate unique US phone numbers
 			Password:    "$2a$10$prehashedpassword1234567890abcdefg", // Should be properly hashed in production
 			Role:        models.RoleUser,
-			ImgURL:      fmt.Sprintf("https://example.com/avatars/user%d.jpg", seq),
+			ImageURL:      fmt.Sprintf("https://example.com/avatars/user%d.jpg", seq),
 			Points:      seq * 10,
 			Amount:      seq * 100,
 			CreatedAt:   now,
