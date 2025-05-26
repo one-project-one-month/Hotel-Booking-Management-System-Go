@@ -5,7 +5,7 @@
 GET {{baseUrl}}
 
 ### Get Room By ID
-GET {{baseUrl}}/91acb666-d538-4365-a7c9-cd00fb9db95a
+GET {{baseUrl}}/bd885da7-b0e5-4e6e-bde5-06fadacffa45
 
 ### Create Room
 POST {{baseUrl}}

@@ -20,7 +20,7 @@ type RequestRoomDto struct {
 
 type ResponseRoomDto struct {
 	ID          uuid.UUID `json:"id"`
-	RoomNo      string    `json:"roomNo"`
+	RoomNo      int    `json:"roomNo"`
 	Type        string    `json:"type"`
 	Price       float64   `json:"price"`
 	Status      string    `json:"status"`
