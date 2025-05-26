@@ -11,7 +11,7 @@ import (
 type Room struct {
 
 	ID          uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-	RoomNo      string    `gorm:"not null;unique"`
+	RoomNo      int    `gorm:"not null;unique"`
 	Type        string    `gorm:"not null"`
 	Price       float64   `gorm:"not null"`
 	Status      string    `gorm:"not null"`
