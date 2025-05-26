@@ -44,7 +44,7 @@ func NewResponseDtoFromModel(room *models.Room) ResponseRoomDto {
 		Price:       room.Price,
 		Status:      room.Status,
 		IsFeatured:  room.IsFeatured,
-		Description: room.Description,
+		Details: 	 room.Details,
 		ImgURL:      room.ImgURL,
 		GuestLimit:  room.GuestLimit,
 		DeletedAt:   deletedAt,
