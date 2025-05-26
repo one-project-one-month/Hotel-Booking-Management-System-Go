@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
 
 jobs:
   testing:
@@ -55,7 +57,7 @@ jobs:
           sed -i 's/sslmode: disable/sslmode: ${{vars.SSL_MODE}}/' config.yml
       - name: Check Replacement
         run: cat config.yml
-      - name : Build & Push to registry
+      - name: Build & Push to registry
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -74,5 +76,9 @@ jobs:
           image-url: ${{vars.DOCKERHUB_USERNAME}}/hbms:${{github.sha}}
           render-api-key: ${{ secrets.RENDER_API_KEY }}
           wait-for-deployment: true
-
+defaults:
+permissions:
+env:
+run-name:
+concurrency:
 
