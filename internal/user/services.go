@@ -2,8 +2,8 @@ package user
 
 import (
 	"github.com/google/uuid"
-	"github.com/jinzhu/copier"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/utils"
 )
 
 // Service
@@ -34,7 +34,7 @@ func (s *Service) getUserByID(id uuid.UUID) (*ResponseUserDto, error) {
 }
 
 func (s *Service) createUser(userDto *CreateUserDto) (*ResponseUserDto, error) {
-	newUser, err := mapStruct(&models.User{}, userDto)
+	newUser, err := utils.MapStruct(&models.User{}, userDto)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (s *Service) createUser(userDto *CreateUserDto) (*ResponseUserDto, error) {
 }
 
 func (s *Service) updateUser(userDto *UpdateUserDto, id uuid.UUID) (*ResponseUserDto, error) {
-	newUser, err := mapStruct(&models.User{}, userDto)
+	newUser, err := utils.MapStruct(&models.User{}, userDto)
 	user, err := s.repo.update(newUser, id)
 	if err != nil {
 		return nil, err
@@ -63,9 +63,4 @@ func (s *Service) deleteUserByID(id uuid.UUID) error {
 	}
 
 	return nil
-}
-
-func mapStruct[T any](to *T, from any) (*T, error) {
-	err := copier.Copy(&to, from)
-	return to, err
 }
