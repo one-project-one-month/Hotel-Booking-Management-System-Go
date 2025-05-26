@@ -1,0 +1,35 @@
+### Local Environment
+@baseUrl = http://localhost:8080/api/v1/user
+
+### Get All User
+GET {{baseUrl}}
+
+### Get User By ID
+GET {{baseUrl}}/d8411fec-b658-47cd-8dab-e83644c7ed1f
+
+### Create User
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "username": "johnDoe",
+  "password": "password123",
+  "email": "john.doe@example.com",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+
+### Update User
+PATCH {{baseUrl}}/a4c114d9-a304-447b-ab53-322a458c2261
+Content-Type: application/json
+
+{
+  "username": "janeDoe",
+  "password": "password123",
+  "email": "jane.doe@example.com",
+  "firstName": "Jane",
+  "lastName": "Doe"
+}
+
+### Delete User By ID
+DELETE {{baseUrl}}/a4c114d9-a304-447b-ab53-322a458c2261
