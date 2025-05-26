@@ -2,6 +2,7 @@ package room
 
 import (
 	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
 	"gorm.io/gorm"
 )
@@ -16,12 +17,19 @@ func newRepository(db *gorm.DB) *Repository {
 }
 
 func (r *Repository) findAll() ([]ResponseRoomDto, error) {
-	var rooms []ResponseRoomDto
-	if err := r.db.Model(&models.Room{}).Find(&rooms, &ResponseRoomDto{}).Error; err != nil {
+	var rooms []models.Room
+	if err := r.db.Find(&rooms).Error; err != nil {
 		return nil, err
 	}
 
-	return rooms, nil
+	response := make([]ResponseRoomDto, len(rooms))
+	for i, room := range rooms {
+		resRoom := ResponseRoomDto{}
+		_ = copier.Copy(&resRoom, &room)
+		response[i] = resRoom
+	}
+	return response, nil
+
 }
 
 func (r *Repository) findByID(id uuid.UUID) (*models.Room, error) {
@@ -48,7 +56,8 @@ func (r *Repository) update(updatedRoom *RequestRoomDto, id uuid.UUID) (*models.
 	if err != nil {
 		return nil, err
 	}
-	err = r.db.Model(&room).Updates(updatedRoom).Error
+	err = MapRequestDtoToRoom(updatedRoom, &room)
+	err = r.db.Save(&room).Error
 	if err != nil {
 		return nil, err
 	}

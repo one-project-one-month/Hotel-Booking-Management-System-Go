@@ -17,6 +17,16 @@ jobs:
           go-version: '1.24.2'
       - name: Check Go Version
         run: go version
+      - name: Set up Postgres DB for testing
+        uses: ikalnytskyi/action-setup-postgres@v7
+        with:
+          username: postgres
+          password: 12345678
+          database: hotel_booking
+          port: 5432
+      - name: Install uuid4 in postgres server
+        run: |
+          psql postgresql://postgres:12345678@localhost:5432/hotel_booking -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";"
       - name: Testing
         run: go test -v ./...
 
@@ -36,10 +46,13 @@ jobs:
           password: ${{secrets.DOCKERHUB_PASSWORD}}
       - name: Replace Config Values for Production
         run: |
+          sed -i 's/environment: development/environment: ${{vars.ENV}}/' config.yml
           sed -i 's/host: 127.0.0.1/host: ${{vars.DB_HOST}}/' config.yml
+          sed -i 's/port: 5432/port: ${{vars.PORT}}/' config.yml
           sed -i 's/user: postgres/user: ${{vars.DB_USER}}/' config.yml
           sed -i 's/password: 12345678/password: ${{ secrets.DB_PASSWORD }}/' config.yml
           sed -i 's/dbname: hotel_booking/dbname: ${{vars.DB_NAME}}/' config.yml
+          sed -i 's/sslmode: disable/sslmode: ${{vars.SSL_MODE}}/' config.yml
       - name: Check Replacement
         run: cat config.yml
       - name : Build & Push to registry
@@ -54,7 +67,12 @@ jobs:
     needs: building
     runs-on: ubuntu-latest
     steps:
-      - name: Deploying to render
-        run: echo "To Be Continued!"
+      - name: Deploy to Render
+        uses: gh-actions-workflows/deploy-docker-render@v1.1
+        with:
+          deploy-hook: ${{ secrets.RENDER_DEPLOY_HOOK }}
+          image-url: ${{vars.DOCKERHUB_USERNAME}}/hbms:${{github.sha}}
+          render-api-key: ${{ secrets.RENDER_API_KEY }}
+          wait-for-deployment: true
 
 

@@ -17,6 +17,7 @@ func TestNewPostgres(t *testing.T) {
 		SslMode:  "disable",
 		TimeZone: "Asia/Yangon",
 	}
+
 	postgres, err := New(&dbConfig)
 
 	assert.Nil(t, err)

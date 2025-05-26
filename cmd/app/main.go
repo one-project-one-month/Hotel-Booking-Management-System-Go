@@ -31,8 +31,8 @@ func main() {
 	app := NewApp(&wg, cfg)
 
 	queue := mq.New(&wg, 100)
-	user.Run(app.echo, db, queue)
-	room.Run(app.echo, db)
+	user.Run(app.echo, db, queue, cfg)
+	room.Run(app.echo, db, cfg)
 	coupon.Run(app.echo, db, queue)
 	booking.Run(app.echo, db, queue)
 
