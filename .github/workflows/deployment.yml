@@ -1,10 +1,9 @@
 name: Deployment
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
-
 
 jobs:
   testing:
@@ -76,9 +75,3 @@ jobs:
           image-url: ${{vars.DOCKERHUB_USERNAME}}/hbms:${{github.sha}}
           render-api-key: ${{ secrets.RENDER_API_KEY }}
           wait-for-deployment: true
-defaults:
-permissions:
-env:
-run-name:
-concurrency:
-
