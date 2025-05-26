@@ -16,7 +16,7 @@ type Room struct {
 	Price       float64   `gorm:"not null"`
 	Status      string    `gorm:"not null"`
 	IsFeatured  bool      `gorm:"default:false"`
-	Description string    `gorm:"type:text"`
+	Details string    `gorm:"type:text"`
 	ImgURL      string    `gorm:"type:text"`
 	GuestLimit  int       `gorm:"not null"`
 	CreatedAt   time.Time
