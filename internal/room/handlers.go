@@ -1,7 +1,6 @@
 package room
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -59,7 +58,6 @@ func (h *Handler) createRoom(ctx echo.Context) error {
 
 	err := ctx.Bind(&newRoom)
 	if err != nil {
-		log.Fatal("Error binding request body", err)
 		return ctx.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
 			Message: err.Error(),
 			Error:   err,
@@ -67,7 +65,6 @@ func (h *Handler) createRoom(ctx echo.Context) error {
 	}
 	err = ctx.Validate(&newRoom)
 	if err != nil {
-		log.Fatal("Validation Failed!", err)
 		return ctx.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
 			Message: err.Error(),
 			Error:   err,
