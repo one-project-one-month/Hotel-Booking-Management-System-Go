@@ -28,7 +28,6 @@ func NewApp(wg *sync.WaitGroup, cfg *config.Config) *App {
 	app := echo.New()
 	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 	app.Validator = &requestValidator.CustomValidator{Validator: validator.New()}
 
