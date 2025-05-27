@@ -23,7 +23,7 @@ func New(cfg *config.Postgres) (*gorm.DB, error) {
 
 	//if cfg.Host == "127.0.0.1" {
 
-		err = db.AutoMigrate(&models.User{}, &models.Room{}, &models.Coupon{}, &models.Booking{}, &models.CheckInOut{},&models.BookAccount{})
+		err = db.AutoMigrate(&models.User{}, &models.Room{}, &models.Coupon{}, &models.Booking{}, &models.CheckInOut{}, &models.BankAccount{})
 		if err != nil {
 			log.Fatal(err)
 		}
