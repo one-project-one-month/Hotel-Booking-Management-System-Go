@@ -14,7 +14,7 @@ func Run(e *echo.Echo, db *gorm.DB, queue *mq.MQ) {
 	}
 
 	repo := newRepository(db)
-	service := newService(repo)
+	service := newService(repo, queue)
 	handler := newHandler(service, queue)
 	g := e.Group("/api/v1/bookings")
 	g.GET("", handler.findAllBookings)
