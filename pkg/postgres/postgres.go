@@ -21,15 +21,14 @@ func New(cfg *config.Postgres) (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
+	//if cfg.Host == "127.0.0.1" {
 
-	if cfg.Host == "127.0.0.1" {
-
-		err = db.AutoMigrate(&models.User{}, &models.Room{}, &models.Coupon{},&models.Booking{})
+		err = db.AutoMigrate(&models.User{}, &models.Room{}, &models.Coupon{}, &models.Booking{}, &models.CheckInOut{})
 		if err != nil {
 			log.Fatal(err)
 		}
 
-	}
+	//}
 
 	return db, nil
 }
