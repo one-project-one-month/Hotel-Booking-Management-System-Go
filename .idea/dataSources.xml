@@ -8,12 +8,5 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/hotel_booking</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="postgres@aws-0-us-east-1.pooler.supabase.com" uuid="4360e9f2-ee7d-4e05-a13f-e7ca6a22eaa0">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
 </project>
