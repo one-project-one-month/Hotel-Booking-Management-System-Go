@@ -8,6 +8,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/bankaccount"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/booking"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/checkinout"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/coupon"
@@ -37,6 +38,7 @@ func main() {
 	coupon.Run(app.echo, db, queue)
 	booking.Run(app.echo, db, queue)
 	checkinout.Run(app.echo, db, queue)
+	bankaccount.Run(app.echo, db, queue)
 
 	app.echo.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Welcome to Hotel Booking System APIs")
