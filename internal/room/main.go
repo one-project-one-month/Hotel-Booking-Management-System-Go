@@ -8,7 +8,7 @@ import (
 
 // Run Entry Point For Room Feature
 func Run(e *echo.Echo, db *gorm.DB, cfg *config.Config) {
-	//cfg, _ := config.New(".")
+	// cfg, _ := config.New(".")
 	if cfg.Environment == "development" {
 		if err := Seed(db); err != nil {
 			e.Logger.Fatal(err)

@@ -72,7 +72,6 @@ func (h *Handler) createRoom(ctx echo.Context) error {
 	}
 	newRoomID, err := h.service.createRoom(&newRoom)
 	if err != nil {
-
 		return ctx.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
 			Message: "Create Room Failed!",
 			Error:   err,

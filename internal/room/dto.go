@@ -19,16 +19,16 @@ type RequestRoomDto struct {
 }
 
 type ResponseRoomDto struct {
-	ID          uuid.UUID `json:"id"`
-	RoomNo      int    `json:"roomNo"`
-	Type        string    `json:"type"`
-	Price       float64   `json:"price"`
-	Status      string    `json:"status"`
-	IsFeatured  bool      `json:"isFeatured"`
-	Details string    `json:"details"`
-	ImgURL      string    `json:"imgUrl"`
-	GuestLimit  int       `json:"guestLimit"`
-	DeletedAt   *time.Time
+	ID         uuid.UUID `json:"id"`
+	RoomNo     int       `json:"roomNo"`
+	Type       string    `json:"type"`
+	Price      float64   `json:"price"`
+	Status     string    `json:"status"`
+	IsFeatured bool      `json:"isFeatured"`
+	Details    string    `json:"details"`
+	ImgURL     string    `json:"imgUrl"`
+	GuestLimit int       `json:"guestLimit"`
+	DeletedAt  *time.Time
 }
 
 func NewResponseDtoFromModel(room *models.Room) ResponseRoomDto {
@@ -38,15 +38,15 @@ func NewResponseDtoFromModel(room *models.Room) ResponseRoomDto {
 	}
 
 	return ResponseRoomDto{
-		ID:          room.ID,
-		RoomNo:      room.RoomNo,
-		Type:        room.Type,
-		Price:       room.Price,
-		Status:      room.Status,
-		IsFeatured:  room.IsFeatured,
-		Details: 	 room.Details,
-		ImgURL:      room.ImgURL,
-		GuestLimit:  room.GuestLimit,
-		DeletedAt:   deletedAt,
+		ID:         room.ID,
+		RoomNo:     room.RoomNo,
+		Type:       room.Type,
+		Price:      room.Price,
+		Status:     room.Status,
+		IsFeatured: room.IsFeatured,
+		Details:    room.Details,
+		ImgURL:     room.ImgURL,
+		GuestLimit: room.GuestLimit,
+		DeletedAt:  deletedAt,
 	}
 }

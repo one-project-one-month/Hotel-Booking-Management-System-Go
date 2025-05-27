@@ -42,7 +42,7 @@ func Seed(db *gorm.DB) error {
 	for _, s := range seeds {
 		detailsJSON, _ := json.Marshal(s.Details)
 		imgURLJSON, _ := json.Marshal(s.ImgURL)
-		//isFeatured, _ := strconv.ParseBool(s.IsFeatured)
+		// isFeatured, _ := strconv.ParseBool(s.IsFeatured)
 
 		room := models.Room{
 			ID:         uuid.New(),

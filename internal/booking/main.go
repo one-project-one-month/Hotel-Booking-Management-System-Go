@@ -22,5 +22,4 @@ func Run(e *echo.Echo, db *gorm.DB, queue *mq.MQ) {
 	g.POST("", handler.createBooking)
 	g.PATCH("/:id", handler.updateBooking)
 	g.DELETE("/:id", handler.deleteBooking)
-
 }

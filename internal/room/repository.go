@@ -29,7 +29,6 @@ func (r *Repository) findAll() ([]ResponseRoomDto, error) {
 		response[i] = resRoom
 	}
 	return response, nil
-
 }
 
 func (r *Repository) findByID(id uuid.UUID) (*models.Room, error) {

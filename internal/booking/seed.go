@@ -62,7 +62,7 @@ func Seed(db *gorm.DB) error {
 		// Use existing room and user IDs with modulo to cycle through them
 		roomID := roomIDs[i%len(roomIDs)]
 		userID := userIDs[i%len(userIDs)]
-		
+
 		bookings[i] = models.Booking{
 			UserID:        userID,
 			RoomID:        roomID,
