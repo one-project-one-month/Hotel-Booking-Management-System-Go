@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/requestValidator"
@@ -25,6 +26,9 @@ type App struct {
 
 func NewApp(wg *sync.WaitGroup, cfg *config.Config) *App {
 	app := echo.New()
+	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+	}))
 	app.Validator = &requestValidator.CustomValidator{Validator: validator.New()}
 
 	if cfg.Environment == "development" {

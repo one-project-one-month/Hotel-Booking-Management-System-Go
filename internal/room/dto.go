@@ -1,8 +1,6 @@
 package room
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
 )
@@ -28,14 +26,9 @@ type ResponseRoomDto struct {
 	Details    string    `json:"details"`
 	ImgURL     string    `json:"imgUrl"`
 	GuestLimit int       `json:"guestLimit"`
-	DeletedAt  *time.Time
 }
 
 func NewResponseDtoFromModel(room *models.Room) ResponseRoomDto {
-	var deletedAt *time.Time
-	if room.DeletedAt.Valid {
-		deletedAt = &room.DeletedAt.Time
-	}
 
 	return ResponseRoomDto{
 		ID:         room.ID,
@@ -47,6 +40,5 @@ func NewResponseDtoFromModel(room *models.Room) ResponseRoomDto {
 		Details:    room.Details,
 		ImgURL:     room.ImgURL,
 		GuestLimit: room.GuestLimit,
-		DeletedAt:  deletedAt,
 	}
 }

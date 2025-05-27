@@ -27,7 +27,7 @@ func (s *Service) findAllRooms() ([]ResponseRoomDto, error) {
 	return rooms, nil
 }
 
-func (s *Service) getRoomByID(id uuid.UUID) (*models.Room, error) {
+func (s *Service) getRoomByID(id uuid.UUID) (*ResponseRoomDto, error) {
 	room, err := s.repo.findByID(id)
 	if err != nil {
 		return nil, err
