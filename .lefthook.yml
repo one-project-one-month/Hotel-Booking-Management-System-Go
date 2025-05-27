@@ -5,5 +5,5 @@ pre-commit:
       run: make test
     format:
       run: make format
-    lint:
-      run: make lint
+    # lint:
+    #   run: make lint

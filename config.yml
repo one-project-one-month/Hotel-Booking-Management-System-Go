@@ -8,8 +8,7 @@ postgres:
     host: 127.0.0.1
     port: 5432
     user: postgres
-    password: asdffdsa
+    password: 123456789
     dbname: hotel_booking
     sslmode: disable
     timezone: Asia/Yangon
-
