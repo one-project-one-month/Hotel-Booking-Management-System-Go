@@ -7,3 +7,7 @@ type FindByUserIdDto struct {
 type FindByIdDto struct {
 	ID string
 }
+
+type FindByAccountNumberDto struct {
+	AccountNumber string
+}
