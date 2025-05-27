@@ -31,13 +31,15 @@ func (r *Repository) findAll() ([]ResponseRoomDto, error) {
 	return response, nil
 }
 
-func (r *Repository) findByID(id uuid.UUID) (*models.Room, error) {
+func (r *Repository) findByID(id uuid.UUID) (*ResponseRoomDto, error) {
 	var room models.Room
 	if err := r.db.First(&room, id).Error; err != nil {
 		return nil, err
 	}
+	resRoom := &ResponseRoomDto{}
+	_ = copier.Copy(&resRoom, &room)
 
-	return &room, nil
+	return resRoom, nil
 }
 
 func (r *Repository) create(room *models.Room) (uuid.UUID, error) {
