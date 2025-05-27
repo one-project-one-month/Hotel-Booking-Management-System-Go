@@ -5,12 +5,6 @@ server:
     port: 8080
 
 postgres:
-#    host: ep-twilight-pine-a17yga9y-pooler.ap-southeast-1.aws.neon.tech
-#    port: 5432
-#    user: hotel_booking_owner
-#    password: npg_lzCv3Z2Pmyod
-#    dbname: hotel_booking
-#    sslmode: require
     host: 127.0.0.1
     port: 5432
     user: postgres
