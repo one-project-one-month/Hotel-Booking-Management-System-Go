@@ -12,6 +12,7 @@ import (
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/booking"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/checkinout"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/coupon"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/invoice"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/room"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/user"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
@@ -39,7 +40,7 @@ func main() {
 	booking.Run(app.echo, db, queue)
 	checkinout.Run(app.echo, db, queue)
 	bankaccount.Run(app.echo, db, queue)
-
+	invoice.Run(app.echo, db)
 	app.echo.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Welcome to Hotel Booking System APIs")
 	})
