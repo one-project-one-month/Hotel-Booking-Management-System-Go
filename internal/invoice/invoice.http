@@ -1,0 +1,28 @@
+### Local Environment
+@baseUrl = http://localhost:8080/api/v1/invoices
+
+### Get All Invoices
+GET {{baseUrl}}
+
+### Get Invoice By ID
+GET {{baseUrl}}/016910ed-971e-4c22-ac54-b396a018cd04
+
+### Create Invoice
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "check_in_out_id": "016910ed-971e-4c22-ac54-b396a018cd04",
+  "total_amount": 150.50
+}
+
+### Update Invoice
+PUT {{baseUrl}}/016910ed-971e-4c22-ac54-b396a018cd04
+Content-Type: application/json
+
+{
+  "total_amount": 200.75
+}
+
+### Delete Invoice
+DELETE {{baseUrl}}/016910ed-971e-4c22-ac54-b396a018cd04
