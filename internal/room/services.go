@@ -59,20 +59,34 @@ func (s *Service) deleteRoomByID(id uuid.UUID) error {
 	return nil
 }
 
-func (s *Service) updateRoom(roomDto *RequestRoomDto, id uuid.UUID) (*models.Room, error) {
+func (s *Service) updateRoom(roomDto *RequestRoomDto, id uuid.UUID) (*ResponseRoomDto, error) {
 	room, err := s.repo.update(roomDto, id)
+	resRoom := &ResponseRoomDto{}
 	if err != nil {
 		return nil, err
 	}
+	_ = copier.Copy(&resRoom, room)
+	return resRoom, nil
 
-	return room, nil
 }
 
-func mapStruct[T any](to *T, from any) (*T, error) {
-	err := copier.Copy(&to, from)
-	return to, err
+func (s *Service) updateRoomStatus(status string, id uuid.UUID) (uuid.UUID, error) {
+	updatedRoomID, err := s.repo.updateRoomStatus(status, id)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	return updatedRoomID, nil
 }
 
+func (s *Service) updateRoomIsFeatured(id uuid.UUID) (UpdateRoomIsFeaturedDto, error) {
+	updateRoomIsFeaturedDto, err := s.repo.updateRoomIsFeatured(id)
+	if err != nil {
+		return UpdateRoomIsFeaturedDto{}, err
+	}
+	return updateRoomIsFeaturedDto, nil
+}
+
+// Helper Functions
 func MapRequestDtoToRoom(dto *RequestRoomDto, room *models.Room) error {
 	detailsJSON, err := json.Marshal(dto.Details)
 	if err != nil {

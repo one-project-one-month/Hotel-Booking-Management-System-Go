@@ -7,6 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type UpdateRoomIsFeaturedDto struct {
+	ID         uuid.UUID
+	IsFeatured bool
+}
+
 // Repository handles user data persistence operations.
 type Repository struct {
 	db *gorm.DB // Will be implemented in future releases
@@ -64,6 +69,32 @@ func (r *Repository) update(updatedRoom *RequestRoomDto, id uuid.UUID) (*models.
 	}
 
 	return &room, nil
+}
+
+func (r *Repository) updateRoomStatus(status string, id uuid.UUID) (uuid.UUID, error) {
+	var room *models.Room
+	err := r.db.First(&room, id).Error
+	room.Status = status
+	err = r.db.Save(&room).Error
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return room.ID, nil
+}
+
+func (r *Repository) updateRoomIsFeatured(id uuid.UUID) (UpdateRoomIsFeaturedDto, error) {
+	var room *models.Room
+	err := r.db.First(&room, id).Error
+	room.IsFeatured = !room.IsFeatured
+	err = r.db.Save(&room).Error
+	if err != nil {
+		return UpdateRoomIsFeaturedDto{}, err
+	}
+	return UpdateRoomIsFeaturedDto{
+		ID:         room.ID,
+		IsFeatured: room.IsFeatured,
+	}, nil
 }
 
 func (r *Repository) delete(id uuid.UUID) error {

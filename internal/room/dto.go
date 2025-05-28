@@ -9,7 +9,7 @@ type RequestRoomDto struct {
 	RoomNo     int         `json:"roomNo"      validate:"required"`
 	Type       string      `json:"type"        validate:"required,oneof=Deluxe Standard"`
 	Price      float64     `json:"price"       validate:"required,numeric,gt=0"`
-	Status     string      `json:"status"      validate:"required,oneof=Available CheckedIn CheckOut"`
+	Status     string      `json:"status"      validate:"required,oneof=Available CheckedIn CheckOut Booked Maintainance"`
 	IsFeatured bool        `json:"isFeatured"  validate:"omitempty,boolean"`
 	Details    interface{} `json:"details"     validate:"omitempty,json"`
 	ImgURL     []string    `json:"imgUrl" 	   validate:"omitempty"`
@@ -26,6 +26,10 @@ type ResponseRoomDto struct {
 	Details    string    `json:"details"`
 	ImgURL     string    `json:"imgUrl"`
 	GuestLimit int       `json:"guestLimit"`
+}
+
+type RequestRoomStatusDto struct {
+	Status string `json:"status" validate:"required,oneof=Available CheckedIn CheckOut Booked Maintainance"`
 }
 
 func NewResponseDtoFromModel(room *models.Room) ResponseRoomDto {
