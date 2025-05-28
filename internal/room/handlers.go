@@ -121,6 +121,67 @@ func (h *Handler) updateRoom(ctx echo.Context) error {
 	})
 }
 
+func (h *Handler) updateRoomStatus(ctx echo.Context) error {
+	id := ctx.Param("id")
+	roomUUID, err := uuid.Parse(id)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
+			Message: "Invalid ID!",
+		})
+	}
+	var status RequestRoomStatusDto
+	err = ctx.Bind(&status)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
+			Message: "Invalid Request Body!",
+			Error:   err,
+		})
+	}
+	err = ctx.Validate(&status)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
+			Message: err.Error(),
+			Error:   err,
+		})
+	}
+	updatedRoom, err := h.service.updateRoomStatus(status.Status, roomUUID)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
+			Message: "Update Room Failed!",
+			Error:   err,
+		})
+	}
+	return ctx.JSON(http.StatusOK, &response.HTTPSuccessResponse{
+		Message: "Update Room Success!",
+		Data: map[string]string{
+			"id":     updatedRoom.String(),
+			"status": status.Status,
+		},
+	})
+}
+
+func (h *Handler) updateRoomIsFeatured(ctx echo.Context) error {
+	id := ctx.Param("id")
+	roomUUID, err := uuid.Parse(id)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
+			Message: "Invalid ID!",
+		})
+	}
+
+	updatedRoom, err := h.service.updateRoomIsFeatured(roomUUID)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
+			Message: "Update Room Failed!",
+			Error:   err,
+		})
+	}
+	return ctx.JSON(http.StatusOK, &response.HTTPSuccessResponse{
+		Message: "Update Room Success!",
+		Data:    updatedRoom,
+	})
+}
+
 func (h *Handler) deleteRoom(ctx echo.Context) error {
 	id := ctx.Param("id")
 	roomUUID, err := uuid.Parse(id)

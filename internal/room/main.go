@@ -8,12 +8,10 @@ import (
 
 // Run Entry Point For Room Feature
 func Run(e *echo.Echo, db *gorm.DB, cfg *config.Config) {
-	// cfg, _ := config.New(".")
-	//if cfg.Environment == "development" {
-		if err := Seed(db); err != nil {
-			e.Logger.Fatal(err)
-		}
-	//}
+
+	if err := Seed(db); err != nil {
+		e.Logger.Fatal(err)
+	}
 
 	repo := newRepository(db)
 	service := newService(repo)
@@ -25,4 +23,6 @@ func Run(e *echo.Echo, db *gorm.DB, cfg *config.Config) {
 	g.POST("", handler.createRoom)
 	g.PATCH("/:id", handler.updateRoom)
 	g.DELETE("/:id", handler.deleteRoom)
+	g.PATCH("/:id/status", handler.updateRoomStatus)
+	g.PATCH("/:id/is_featured", handler.updateRoomIsFeatured)
 }
