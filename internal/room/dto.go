@@ -11,7 +11,7 @@ type RequestRoomDto struct {
 	Price      float64     `json:"price"       validate:"required,numeric,gt=0"`
 	Status     string      `json:"status"      validate:"required,oneof=Available CheckedIn CheckOut Booked Maintainance"`
 	IsFeatured bool        `json:"isFeatured"  validate:"omitempty,boolean"`
-	Details    interface{} `json:"details"     validate:"omitempty,json"`
+	Details    interface{} `json:"details"     validate:"omitempty"`
 	ImgURL     []string    `json:"imgUrl" 	   validate:"omitempty"`
 	GuestLimit int         `json:"guestLimit"  validate:"required,numeric,gt=0"`
 }
