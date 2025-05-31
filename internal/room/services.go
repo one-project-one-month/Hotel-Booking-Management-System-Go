@@ -86,6 +86,14 @@ func (s *Service) updateRoomIsFeatured(id uuid.UUID) (UpdateRoomIsFeaturedDto, e
 	return updateRoomIsFeaturedDto, nil
 }
 
+func (s *Service) getRoomByGuestLimit(guestLimit int) ([]ResponseRoomDto, error) {
+	rooms, err := s.repo.getRoomByGuestLimit(guestLimit)
+	if err != nil {
+		return nil, err
+	}
+	return rooms, nil
+}
+
 // Helper Functions
 func MapRequestDtoToRoom(dto *RequestRoomDto, room *models.Room) error {
 	detailsJSON, err := json.Marshal(dto.Details)

@@ -5,7 +5,7 @@
 GET {{baseUrl}}
 
 ### Get Room By ID
-GET {{baseUrl}}/016910ed-971e-4c22-ac54-b396a018cd04
+GET {{baseUrl}}/06acbee1-b0bf-4dfd-96a3-732ee4778548
 
 ### Create Room
 POST {{baseUrl}}
@@ -15,7 +15,7 @@ Content-Type: application/json
   "guestLimit": 12,
   "imgURL": ["https://www.novotellondonwest.co.uk/images/slider_superiorRooms2.jpg"],
   "price": 12.12,
-  "roomNo": 283,
+  "roomNo": 101,
   "status": "Available",
   "type": "Deluxe"
 }
@@ -28,13 +28,13 @@ Content-Type: application/json
   "guestLimit": 12,
   "imgURL": ["https://www.novotellondonwest.co.uk/images/slider_superiorRooms2.jpg"],
   "price": 122,
-  "roomNo": 283,
+  "roomNo": 101,
   "status": "CheckedIn",
   "type": "Deluxe"
 }
 
 ### Delete Room By ID
-DELETE {{baseUrl}}/0fe7e157-76d9-49c4-bba8-6e90af715d2b
+DELETE {{baseUrl}}/06acbee1-b0bf-4dfd-96a3-732ee4778548
 
 ### Update Room Status
 PATCH {{baseUrl}}/016910ed-971e-4c22-ac54-b396a018cd04/status
@@ -47,3 +47,6 @@ Content-Type: application/json
 ### Update Room IsFeatured
 PATCH {{baseUrl}}/016910ed-971e-4c22-ac54-b396a018cd04/is_featured
 Content-Type: application/json
+
+### Search Room By Guest Limit
+GET {{baseUrl}}/search?total_guests=3
