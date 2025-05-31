@@ -29,7 +29,7 @@ func (r *Repository) findAll() ([]ResponseUserDto, error) {
 
 func (r *Repository) findByID(id uuid.UUID) (*ResponseUserDto, error) {
 	var user models.User
-	if err := r.db.First(&user, id).Error; err != nil {
+	if err := r.db.Preload("Bookings").First(&user, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
