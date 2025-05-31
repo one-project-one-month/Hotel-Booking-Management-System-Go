@@ -31,7 +31,6 @@ type User struct {
 	Role        UserRole       `gorm:"type:smallint;not null;default:1" json:"role" validate:"gte=0,lte=3"`
 	ImageURL    string         `gorm:"type:text" json:"image_url"`
 	Points      int            `gorm:"not null;default:0" json:"points" validate:"gte=0"`
-	Amount      int            `gorm:"not null;default:0" json:"amount" validate:"gte=0"`
 	CreatedAt   time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt   time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deleted_at"`
