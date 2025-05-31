@@ -11,13 +11,13 @@ import (
 // Run configures and sets up user routes in the provided Echo instance.
 func Run(e *echo.Echo, db *gorm.DB, queue *mq.MQ, cfg *config.Config) {
 	//if cfg.Environment == "development" {
-		if err := Seed(db); err != nil {
-			e.Logger.Fatal(err)
-		}
+	if err := Seed(db); err != nil {
+		e.Logger.Fatal(err)
+	}
 	//}
 
 	repo := newRepository(db)
-	service := newService(repo)
+	service := newService(repo, queue)
 	handler := newHandler(service, queue)
 
 	g := e.Group("/api/v1/users")

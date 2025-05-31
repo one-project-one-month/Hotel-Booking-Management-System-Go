@@ -2,17 +2,39 @@ package user
 
 import (
 	"github.com/google/uuid"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/events"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/response"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/utils"
 )
 
 // Service
 type Service struct {
-	repo *Repository
+	queue *mq.MQ
+	repo  *Repository
 }
 
-func newService(repo *Repository) *Service {
-	return &Service{repo: repo}
+func newService(repo *Repository, queue *mq.MQ) *Service {
+	s := &Service{repo: repo, queue: queue}
+
+	s.queue.Subscribe(events.USERFINDBYID, func(data any) any {
+		dto := data.(*events.FindByIdDto)
+		user, err := s.getUserByID(dto.ID)
+		if err != nil {
+			return &response.ServiceResponse{
+				AppID: "UserService",
+				Error: err,
+			}
+		}
+
+		return &response.ServiceResponse{
+			AppID: "UserService",
+			Data:  user,
+		}
+	})
+
+	return s
 }
 
 func (s *Service) findAllUsers() ([]ResponseUserDto, error) {

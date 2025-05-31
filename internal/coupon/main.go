@@ -8,7 +8,7 @@ import (
 
 func Run(app *echo.Echo, db *gorm.DB, queue *mq.MQ) {
 	repo := &Repository{database: db}
-	service := &Service{repo: repo}
+	service := &Service{repo: repo, queue: queue}
 	handler := newHandler(service, queue)
 
 	app.POST("/api/v1/coupons", handler.create)

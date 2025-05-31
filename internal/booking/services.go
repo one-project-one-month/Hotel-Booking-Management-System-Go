@@ -19,7 +19,7 @@ func newService(repo *Repository, queue *mq.MQ) *Service {
 
 	queue.Subscribe(events.BOOKINGFETCHED, func(data any) any {
 		dto := data.(events.FindByIdDto)
-		booking, err := s.getBookingByID(uuid.MustParse(dto.ID))
+		booking, err := s.getBookingByID(dto.ID)
 		if err != nil {
 			return nil
 		}

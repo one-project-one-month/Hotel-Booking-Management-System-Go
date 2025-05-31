@@ -33,7 +33,7 @@ func (s *service) Create(ctx context.Context, dto CreateCheckInOutDto) response.
 	reply := s.queue.Publish(&mq.Message{
 		AppID: "CheckInOutService",
 		Topic: events.BOOKINGFETCHED,
-		Data:  events.FindByIdDto{ID: dto.BookingID.String()},
+		Data:  events.FindByIdDto{ID: dto.BookingID},
 	})
 
 	var data any
