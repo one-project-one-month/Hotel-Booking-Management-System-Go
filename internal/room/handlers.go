@@ -2,6 +2,7 @@ package room
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -198,4 +199,25 @@ func (h *Handler) deleteRoom(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusNoContent, &response.HTTPSuccessResponse{})
+}
+
+func (h *Handler) getRoomByGuestLimit(ctx echo.Context) error {
+	guestLimits := ctx.QueryParam("total_guests")
+	guestLimitsInt, err := strconv.ParseInt(guestLimits, 10, 64)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, &response.HTTPErrorResponse{
+			Message: "Invalid Guest Limit!",
+		})
+	}
+	rooms, err := h.service.getRoomByGuestLimit(int(guestLimitsInt))
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
+			Message: "Get Room By Guest Limit Failed!",
+			Error:   err,
+		})
+	}
+	return ctx.JSON(http.StatusOK, &response.HTTPSuccessResponse{
+		Message: "Get Room By Guest Limit Success!",
+		Data:    rooms,
+	})
 }

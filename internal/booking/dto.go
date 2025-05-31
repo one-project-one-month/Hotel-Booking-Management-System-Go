@@ -25,25 +25,27 @@ type UpdateBookingDto struct {
 	CheckIn       *time.Time `json:"checkIn,omitempty" validate:"omitempty"`
 	CheckOut      *time.Time `json:"checkOut,omitempty" validate:"omitempty,gtfield=CheckIn"`
 	GuestCount    *int       `json:"guestCount,omitempty" validate:"omitempty,gt=0"`
+	Status        *string    `json:"status,omitempty" validate:"omitempty,oneof=pending approved"`
 	DepositAmount *float64   `json:"depositAmount,omitempty" validate:"omitempty,gte=0"`
 	TotalAmount   *float64   `json:"totalAmount,omitempty" validate:"omitempty,gt=0"`
 }
 
 type ResponseBookingDto struct {
-	ID            uuid.UUID             `json:"id"`
-	UserID        uuid.UUID             `json:"userId"`
-	RoomID        uuid.UUID             `json:"roomId"`
-	CheckIn       time.Time             `json:"checkIn"`
-	CheckOut      time.Time             `json:"checkOut"`
-	GuestCount    int                   `json:"guestCount"`
-	DepositAmount float64               `json:"depositAmount"`
-	TotalAmount   float64               `json:"totalAmount"`
-	Status        string                `json:"status"`
-	CreatedAt     time.Time             `json:"createdAt"`
-	UpdatedAt     time.Time             `json:"updatedAt"`
-	DeletedAt     *time.Time            `json:"deletedAt"`
-	User          *user.ResponseUserDto `json:"user"`
-	Room          *room.ResponseRoomDto `json:"room"`
+	ID            uuid.UUID `json:"id"`
+	UserID        uuid.UUID `json:"userId"`
+	RoomID        uuid.UUID `json:"roomId"`
+	CheckIn       time.Time `json:"checkIn"`
+	CheckOut      time.Time `json:"checkOut"`
+	GuestCount    int       `json:"guestCount"`
+	DepositAmount float64   `json:"depositAmount"`
+	TotalAmount   float64   `json:"totalAmount"`
+	Status        string    `json:"status"`
+	CreatedAt     time.Time `json:"createdAt"`
+
+	UpdatedAt time.Time             `json:"updatedAt"`
+	DeletedAt *time.Time            `json:"deletedAt"`
+	User      *user.ResponseUserDto `json:"user"`
+	Room      *room.ResponseRoomDto `json:"room"`
 }
 
 func NewResponseDtoFromModel(booking *models.Booking) ResponseBookingDto {
@@ -73,6 +75,7 @@ func NewResponseDtoFromModel(booking *models.Booking) ResponseBookingDto {
 		GuestCount:    booking.GuestCount,
 		DepositAmount: booking.DepositAmount,
 		TotalAmount:   booking.TotalAmount,
+		Status:        string(booking.Status),
 		CreatedAt:     booking.CreatedAt,
 		UpdatedAt:     booking.UpdatedAt,
 		DeletedAt:     deletedAt,

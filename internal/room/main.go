@@ -25,4 +25,5 @@ func Run(e *echo.Echo, db *gorm.DB, cfg *config.Config) {
 	g.DELETE("/:id", handler.deleteRoom)
 	g.PATCH("/:id/status", handler.updateRoomStatus)
 	g.PATCH("/:id/is_featured", handler.updateRoomIsFeatured)
+	g.GET("/search", handler.getRoomByGuestLimit)
 }

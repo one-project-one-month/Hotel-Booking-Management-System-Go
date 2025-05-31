@@ -10,7 +10,7 @@ import (
 // Gorm Model
 type Room struct {
 	ID         uuid.UUID `gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-	RoomNo     int       `gorm:"not null;unique"`
+	RoomNo     int       `gorm:"not null;unique,WHERE:deleted_at IS NULL"`
 	Type       string    `gorm:"not null"`
 	Price      float64   `gorm:"not null"`
 	Status     string    `gorm:"not null"`

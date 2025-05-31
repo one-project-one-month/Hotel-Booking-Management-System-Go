@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -19,26 +20,42 @@ func Seed(db *gorm.DB) error {
 		return nil
 	}
 
-	const batchSize = 40
+	const batchSize = 4
 	users := make([]models.User, batchSize)
 	now := time.Now()
 
+	// Define user data with plain text passwords that will be hashed
+	userData := []struct {
+		name     string
+		email    string
+		phone    string
+		password string
+		role     models.UserRole
+		points   int
+	}{
+		{"Admin User", "admin@hotel.com", "+12001001001", "admin123", models.RoleAdmin, 100},
+		{"John Doe", "john.doe@example.com", "+12001001002", "password123", models.RoleUser, 50},
+		{"Jane Smith", "jane.smith@example.com", "+12001001003", "securepass", models.RoleUser, 75},
+		{"Bob Johnson", "bob.johnson@example.com", "+12001001004", "mypassword", models.RoleUser, 25},
+	}
+
 	for i := 0; i < batchSize; i++ {
-		seq := i + 1
+		// Hash the password
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userData[i].password), bcrypt.DefaultCost)
+		if err != nil {
+			return fmt.Errorf("failed to hash password for user %s: %w", userData[i].name, err)
+		}
+
 		users[i] = models.User{
-			Name:        fmt.Sprintf("User %d", seq),
-			Email:       fmt.Sprintf("user%d@example.com", seq),
-			PhoneNumber: fmt.Sprintf("+1%010d", 2000000000+seq),      // Generate unique US phone numbers
-			Password:    "$2a$10$prehashedpassword1234567890abcdefg", // Should be properly hashed in production
-			Role:        models.RoleUser,
-			ImageURL:    fmt.Sprintf("https://example.com/avatars/user%d.jpg", seq),
-			Points:      seq * 10,
-			Amount:      seq * 100,
+			Name:        userData[i].name,
+			Email:       userData[i].email,
+			PhoneNumber: userData[i].phone,
+			Password:    string(hashedPassword),
+			Role:        userData[i].role,
+			ImageURL:    fmt.Sprintf("https://example.com/avatars/user%d.jpg", i+1),
+			Points:      userData[i].points,
 			CreatedAt:   now,
 			UpdatedAt:   now,
-		}
-		if seq == 1 {
-			users[i].Role = models.RoleAdmin
 		}
 	}
 
@@ -52,5 +69,10 @@ func Seed(db *gorm.DB) error {
 	}
 
 	fmt.Printf("successfully seeded %d users\n", batchSize)
+	fmt.Println("Seeded users:")
+	for _, user := range userData {
+		fmt.Printf("- %s (%s) - Password: %s\n", user.name, user.email, user.password)
+	}
+
 	return nil
 }

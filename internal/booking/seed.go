@@ -70,6 +70,7 @@ func Seed(db *gorm.DB) error {
 			GuestCount:    seq%4 + 1,
 			DepositAmount: float64(seq * 10),
 			TotalAmount:   float64(seq * 100),
+			Status:        "pending",
 			CreatedAt:     now,
 			UpdatedAt:     now,
 		}

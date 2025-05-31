@@ -27,23 +27,31 @@ type UpdateUserDto struct {
 }
 
 type ResponseUserDto struct {
-	ID          uuid.UUID  `json:"id"`
-	Name        string     `json:"name"`
-	Email       string     `json:"email"`
-	PhoneNumber string     `json:"phoneNumber"`
-	Role        string     `json:"role"`
-	ImageUrl    string     `json:"imageUrl"`
-	Points      int        `json:"points"`
-	Amount      int        `json:"amount"`
-	CreatedAt   time.Time  `json:"createdAt"`
-	UpdatedAt   time.Time  `json:"updatedAt"`
-	DeletedAt   *time.Time `json:"deletedAt"`
+	ID          uuid.UUID        `json:"id"`
+	Name        string           `json:"name"`
+	Email       string           `json:"email"`
+	PhoneNumber string           `json:"phoneNumber"`
+	Role        string           `json:"role"`
+	ImageUrl    string           `json:"imageUrl"`
+	Points      int              `json:"points"`
+	CreatedAt   time.Time        `json:"createdAt"`
+	UpdatedAt   time.Time        `json:"updatedAt"`
+	DeletedAt   *time.Time       `json:"deletedAt"`
+	Bookings    []models.Booking `json:"bookings,omitempty"`
 }
-
 func NewResponseDtoFromModel(user *models.User) ResponseUserDto {
 	var deletedAt *time.Time
 	if user.DeletedAt.Valid {
 		deletedAt = &user.DeletedAt.Time
+	}
+
+	// Clear nested relationships from bookings
+	bookings := make([]models.Booking, len(user.Bookings))
+	for i, booking := range user.Bookings {
+		bookings[i] = booking
+		// Clear nested relationships to avoid circular references
+		bookings[i].User = models.User{}
+		bookings[i].Room = models.Room{}
 	}
 
 	return ResponseUserDto{
@@ -54,9 +62,9 @@ func NewResponseDtoFromModel(user *models.User) ResponseUserDto {
 		Role:        strings.ToLower(user.Role.String()), // Ensure consistent case
 		ImageUrl:    user.ImageURL,
 		Points:      user.Points,
-		Amount:      user.Amount,
 		CreatedAt:   user.CreatedAt,
 		UpdatedAt:   user.UpdatedAt,
 		DeletedAt:   deletedAt,
+		Bookings:    bookings,
 	}
 }

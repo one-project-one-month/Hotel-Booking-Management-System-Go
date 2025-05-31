@@ -105,3 +105,18 @@ func (r *Repository) delete(id uuid.UUID) error {
 
 	return nil
 }
+
+func (r *Repository) getRoomByGuestLimit(guests int) ([]ResponseRoomDto, error) {
+	var rooms []models.Room
+	if err := r.db.Where("guest_limit >= ?", guests).Find(&rooms).Error; err != nil {
+		return nil, err
+	}
+	response := make([]ResponseRoomDto, len(rooms))
+	for i, room := range rooms {
+		resRoom := ResponseRoomDto{}
+		_ = copier.Copy(&resRoom, &room)
+		response[i] = resRoom
+	}
+	return response, nil
+
+}
