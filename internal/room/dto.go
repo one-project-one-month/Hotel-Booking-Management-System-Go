@@ -33,7 +33,6 @@ type RequestRoomStatusDto struct {
 }
 
 func NewResponseDtoFromModel(room *models.Room) ResponseRoomDto {
-
 	return ResponseRoomDto{
 		ID:         room.ID,
 		RoomNo:     room.RoomNo,
