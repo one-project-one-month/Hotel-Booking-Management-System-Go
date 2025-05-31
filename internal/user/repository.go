@@ -37,15 +37,21 @@ func (r *Repository) findByID(id uuid.UUID) (*ResponseUserDto, error) {
 	return &response, nil
 }
 
-func (r *Repository) create(user *models.User) (*ResponseUserDto, error) {
-	result := r.db.Create(&user)
-	if err := result.Error; err != nil {
+func (r *Repository) findByEmail(email string) (*models.User, error) {
+	var user models.User
+	if err := r.db.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
 	}
+	return &user, nil
+}
 
-	response := NewResponseDtoFromModel(user)
+func (r *Repository) create(user *models.User) error {
+	result := r.db.Create(&user)
+	if err := result.Error; err != nil {
+		return err
+	}
 
-	return &response, nil
+	return nil
 }
 
 func (r *Repository) update(user *models.User, id uuid.UUID) (*ResponseUserDto, error) {

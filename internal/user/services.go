@@ -1,6 +1,8 @@
 package user
 
 import (
+	"encoding/json"
+
 	"github.com/google/uuid"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/events"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
@@ -21,6 +23,39 @@ func newService(repo *Repository, queue *mq.MQ) *Service {
 	s.queue.Subscribe(events.USERFINDBYID, func(data any) any {
 		dto := data.(*events.FindByIdDto)
 		user, err := s.getUserByID(dto.ID)
+		if err != nil {
+			return &response.ServiceResponse{
+				AppID: "UserService",
+				Error: err,
+			}
+		}
+
+		return &response.ServiceResponse{
+			AppID: "UserService",
+			Data:  user,
+		}
+	})
+
+	s.queue.Subscribe(events.USERCREATED, func(data any) any {
+		var user CreateUserDto
+		json.Unmarshal(data.([]byte), &user)
+		err := s.createUser(&user)
+		if err != nil {
+			return &response.ServiceResponse{
+				AppID: "UserService",
+				Error: err,
+			}
+		}
+
+		return &response.ServiceResponse{
+			AppID:   "UserService",
+			Message: "User created successfully",
+		}
+	})
+
+	s.queue.Subscribe(events.USERFINDBYEMAIL, func(data any) any {
+		dto := data.(*events.FindByEmailDto)
+		user, err := s.getUserByEmail(dto.Email)
 		if err != nil {
 			return &response.ServiceResponse{
 				AppID: "UserService",
@@ -55,17 +90,27 @@ func (s *Service) getUserByID(id uuid.UUID) (*ResponseUserDto, error) {
 	return user, nil
 }
 
-func (s *Service) createUser(userDto *CreateUserDto) (*ResponseUserDto, error) {
-	newUser, err := utils.MapStruct(&models.User{}, userDto)
-	if err != nil {
-		return nil, err
-	}
-	createdUser, err := s.repo.create(newUser)
+func (s *Service) getUserByEmail(email string) (*models.User, error) {
+	user, err := s.repo.findByEmail(email)
 	if err != nil {
 		return nil, err
 	}
 
-	return createdUser, nil
+	return user, nil
+}
+
+func (s *Service) createUser(userDto *CreateUserDto) error {
+	newUser, err := utils.MapStruct(&models.User{}, userDto)
+	if err != nil {
+		return err
+	}
+
+	err = s.repo.create(newUser)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Service) updateUser(userDto *UpdateUserDto, id uuid.UUID) (*ResponseUserDto, error) {

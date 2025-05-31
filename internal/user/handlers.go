@@ -73,7 +73,8 @@ func (h *Handler) createRoom(ctx echo.Context) error {
 			Error:   err,
 		})
 	}
-	createdUser, err := h.service.createUser(&newUser)
+
+	err = h.service.createUser(&newUser)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
 			Message: "Create User Failed!",
@@ -83,7 +84,6 @@ func (h *Handler) createRoom(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusCreated, &response.HTTPSuccessResponse{
 		Message: "Create User Success!",
-		Data:    createdUser,
 	})
 }
 
