@@ -45,6 +45,14 @@ func (r *Repository) findByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
+func (r *Repository) findByPhoneNumber(phoneNumber string) (*models.User, error) {
+	var user models.User
+	if err := r.db.Where("phone_number = ?", phoneNumber).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r *Repository) create(user *models.User) error {
 	result := r.db.Create(&user)
 	if err := result.Error; err != nil {

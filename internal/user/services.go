@@ -69,6 +69,22 @@ func newService(repo *Repository, queue *mq.MQ) *Service {
 		}
 	})
 
+	s.queue.Subscribe(events.USERFINDBYPHONENUMBER, func(data any) any {
+		dto := data.(*events.FindByPhoneNumberDto)
+		user, err := s.getUserByPhoneNumber(dto.PhoneNumber)
+		if err != nil {
+			return &response.ServiceResponse{
+				AppID: "UserService",
+				Error: err,
+			}
+		}
+
+		return &response.ServiceResponse{
+			AppID: "UserService",
+			Data:  user,
+		}
+	})
+
 	return s
 }
 
@@ -92,6 +108,15 @@ func (s *Service) getUserByID(id uuid.UUID) (*ResponseUserDto, error) {
 
 func (s *Service) getUserByEmail(email string) (*models.User, error) {
 	user, err := s.repo.findByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (s *Service) getUserByPhoneNumber(phoneNumber string) (*models.User, error) {
+	user, err := s.repo.findByPhoneNumber(phoneNumber)
 	if err != nil {
 		return nil, err
 	}

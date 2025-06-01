@@ -17,3 +17,7 @@ type FindByEmailDto struct {
 type FindByAccountNumberDto struct {
 	AccountNumber string
 }
+
+type FindByPhoneNumberDto struct {
+	PhoneNumber string
+}

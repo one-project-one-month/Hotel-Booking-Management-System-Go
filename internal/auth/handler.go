@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -73,7 +72,7 @@ func (h *Handler) Signup(c echo.Context) error {
 
 	if errors.Is(resp.Error, response.ErrConflict) {
 		return c.JSON(http.StatusConflict, &response.HTTPErrorResponse{
-			Message: fmt.Sprintf("User with email %s already exists", user.Email),
+			Message: resp.Message,
 		})
 	}
 

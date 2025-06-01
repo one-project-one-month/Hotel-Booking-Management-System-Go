@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/events"
@@ -60,21 +61,51 @@ func (s *Service) Signin(user *SignInUserDto) *response.ServiceResponse {
 }
 
 func (s *Service) Signup(user *SignUpUserDto) *response.ServiceResponse {
-	reply := s.queue.Publish(&mq.Message{
+	emailReply := s.queue.Publish(&mq.Message{
 		AppID: "AuthService",
 		Topic: events.USERFINDBYEMAIL,
 		Data:  &events.FindByEmailDto{Email: user.Email},
 	})
 
 	select {
-	case resp := <-reply:
+	case resp := <-emailReply:
 		data := resp.(*response.ServiceResponse)
 		if data.Data != nil {
 			return &response.ServiceResponse{
 				AppID:   "AuthService",
 				Error:   response.ErrConflict,
-				Message: "User already exists",
+				Message: fmt.Sprintf("User with email %s already exists", user.Email),
 			}
+		}
+	case <-time.Tick(1 * time.Second):
+		return &response.ServiceResponse{
+			AppID:   "AuthService",
+			Error:   response.ErrInternalServer,
+			Message: "Timeout!",
+		}
+	}
+
+	phoneNumberReply := s.queue.Publish(&mq.Message{
+		AppID: "AuthService",
+		Topic: events.USERFINDBYPHONENUMBER,
+		Data:  &events.FindByPhoneNumberDto{PhoneNumber: user.PhoneNumber},
+	})
+
+	select {
+	case resp := <-phoneNumberReply:
+		data := resp.(*response.ServiceResponse)
+		if data.Data != nil {
+			return &response.ServiceResponse{
+				AppID:   "AuthService",
+				Error:   response.ErrConflict,
+				Message: fmt.Sprintf("User with phone number %s already exists", user.PhoneNumber),
+			}
+		}
+	case <-time.Tick(1 * time.Second):
+		return &response.ServiceResponse{
+			AppID:   "AuthService",
+			Error:   response.ErrInternalServer,
+			Message: "Timeout!",
 		}
 	}
 
@@ -90,7 +121,7 @@ func (s *Service) Signup(user *SignUpUserDto) *response.ServiceResponse {
 	user.Password = password
 
 	userJson, _ := json.Marshal(user)
-	reply = s.queue.Publish(&mq.Message{
+	reply := s.queue.Publish(&mq.Message{
 		AppID: "AuthService",
 		Topic: events.USERCREATED,
 		Data:  userJson,
