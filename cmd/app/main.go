@@ -33,8 +33,9 @@ func main() {
 
 	var wg sync.WaitGroup
 	app := NewApp(&wg, cfg)
-
 	queue := mq.New(&wg, 100)
+
+	auth.Run(app.echo, queue)
 	user.Run(app.echo, db, queue, cfg)
 	room.Run(app.echo, db, cfg)
 	coupon.Run(app.echo, db, queue)
@@ -42,7 +43,7 @@ func main() {
 	checkinout.Run(app.echo, db, queue)
 	bankaccount.Run(app.echo, db, queue)
 	invoice.Run(app.echo, db)
-	auth.Run(app.echo, queue)
+
 	app.echo.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Welcome to Hotel Booking System APIs")
 	})

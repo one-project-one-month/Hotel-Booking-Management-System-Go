@@ -26,10 +26,13 @@ type App struct {
 }
 
 func NewApp(wg *sync.WaitGroup, cfg *config.Config) *App {
+	envify.Load()
 	app := echo.New()
 	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 	}))
+	app.Use(middleware.Logger())
+	app.Use(middleware.Recover())
 	app.Validator = &requestValidator.CustomValidator{Validator: validator.New()}
 
 	if cfg.Environment == "development" {
@@ -53,7 +56,6 @@ func (app *App) validateEnv() {
 }
 
 func (app *App) start() {
-	envify.Load()
 	app.wg.Add(1)
 	go func() {
 		defer app.wg.Done()

@@ -2,8 +2,10 @@
 package user
 
 import (
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/auth"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
 	"gorm.io/gorm"
 )
@@ -19,8 +21,11 @@ func Run(e *echo.Echo, db *gorm.DB, queue *mq.MQ, cfg *config.Config) {
 	repo := newRepository(db)
 	service := newService(repo, queue)
 	handler := newHandler(service, queue)
-
 	g := e.Group("/api/v1/users")
+
+	jwtConfig := auth.NewJWTConfig()
+	g.Use(echojwt.WithConfig(*jwtConfig))
+
 	g.GET("", handler.findAllUsers)
 	g.GET("/:id", handler.findRoomByID)
 	g.POST("", handler.createRoom)
