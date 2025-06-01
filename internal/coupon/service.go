@@ -6,12 +6,15 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/events"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/response"
 )
 
 type Service struct {
-	repo *Repository
+	queue *mq.MQ
+	repo  *Repository
 }
 
 func (s *Service) generateCode() string {
@@ -26,8 +29,35 @@ func (s *Service) generateCode() string {
 }
 
 func (s *Service) create(coupon *CreateCouponDto) *response.ServiceResponse {
+	userId, _ := uuid.Parse(coupon.UserID)
+	reply := s.queue.Publish(&mq.Message{
+		AppID: "CouponService",
+		Topic: events.USERFINDBYID,
+		Data: &events.FindByIdDto{
+			ID: userId,
+		},
+	})
+
+	select {
+	case resp := <-reply:
+		if data := resp.(*response.ServiceResponse); data.Error != nil {
+			return &response.ServiceResponse{
+				AppID:   "CouponService",
+				Error:   response.ErrNotFound,
+				Message: "User id is not found",
+			}
+		}
+	case <-time.Tick(2 * time.Second):
+		return &response.ServiceResponse{
+			AppID:   "CouponService",
+			Error:   response.ErrInternalServer,
+			Message: "User service error",
+		}
+	}
+
 	var model models.Coupon
 	model.Discount = coupon.Discounts
+	model.UserID = userId
 	model.Code = s.generateCode()
 	if expiryDate, err := time.Parse(time.DateTime, coupon.ExpiryDate); err == nil {
 		model.ExpiryDate = expiryDate
@@ -121,7 +151,7 @@ func (s *Service) update(id string, coupon *UpdateCouponDto) *response.ServiceRe
 	}
 
 	if coupon.Method == "activate" {
-		if couponModel.IsClaimed {
+		if couponModel.IsActive {
 			return &response.ServiceResponse{
 				AppID:   "CouponService",
 				Error:   response.ErrBadRequest,
@@ -130,8 +160,6 @@ func (s *Service) update(id string, coupon *UpdateCouponDto) *response.ServiceRe
 		}
 		couponModel.IsActive = true
 	}
-
-	couponModel.UserID = coupon.Data.UserID
 
 	if err := s.repo.update(id, couponModel); err != nil {
 		return &response.ServiceResponse{

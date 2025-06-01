@@ -67,7 +67,6 @@ func (s *Service) updateRoom(roomDto *RequestRoomDto, id uuid.UUID) (*ResponseRo
 	}
 	_ = copier.Copy(&resRoom, room)
 	return resRoom, nil
-
 }
 
 func (s *Service) updateRoomStatus(status string, id uuid.UUID) (uuid.UUID, error) {

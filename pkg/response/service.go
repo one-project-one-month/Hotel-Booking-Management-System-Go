@@ -17,6 +17,8 @@ var ErrTimeout = errors.New("operation timeout")
 // ErrBadRequest represents an error when the user operate invalid data
 var ErrBadRequest = errors.New("bad request")
 
+var ErrUnauthorized = errors.New("unauthorized")
+
 // ServiceResponse is a standardized response structure for internal service operations.
 type ServiceResponse struct {
 	AppID   string      `json:"app_id"`
