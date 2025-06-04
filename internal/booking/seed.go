@@ -65,7 +65,7 @@ func Seed(db *gorm.DB) error {
 			checkInDate := now.AddDate(0, 0, seq*7)
 			// Set a default check-out date 3 days after check-in
 			checkOutDate := checkInDate.AddDate(0, 0, 3)
-			
+
 			checkInOuts[i] = models.CheckInOut{
 				CheckIn:     checkInDate,
 				CheckOut:    checkOutDate,
@@ -119,7 +119,6 @@ func Seed(db *gorm.DB) error {
 
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}
