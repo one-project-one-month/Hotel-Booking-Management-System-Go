@@ -14,9 +14,9 @@ func (r *Repository) create(coupon *models.Coupon) error {
 	return r.database.Create(coupon).Error
 }
 
-func (r *Repository) findList(order string, offset int, limit int) ([]models.Coupon, error) {
+func (r *Repository) findList() ([]models.Coupon, error) {
 	var coupons []models.Coupon
-	if err := r.database.Order(order).Limit(limit).Offset(offset).Find(&coupons).Error; err != nil {
+	if err := r.database.Find(&coupons).Error; err != nil {
 		return nil, err
 	}
 	return coupons, nil

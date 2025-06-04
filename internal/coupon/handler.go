@@ -59,9 +59,7 @@ func (h *Handler) create(c echo.Context) error {
 }
 
 func (h *Handler) findList(c echo.Context) error {
-	query := bindQuery(c)
-
-	coupons := h.service.findList(query)
+	coupons := h.service.findList()
 
 	return c.JSON(http.StatusOK, response.HTTPSuccessResponse{
 		Message: "Coupon list fetched successfully",

@@ -76,10 +76,8 @@ func (s *Service) create(coupon *CreateCouponDto) *response.ServiceResponse {
 	}
 }
 
-func (s *Service) findList(query *FindListCouponDto) *response.ServiceResponse {
-	order := query.SortBy + " " + query.OrderBy
-	offset := (query.Page - 1) * query.Limit
-	coupons, err := s.repo.findList(order, offset, query.Limit)
+func (s *Service) findList() *response.ServiceResponse {
+	coupons, err := s.repo.findList()
 	if err != nil {
 		return &response.ServiceResponse{
 			AppID: "CouponService",
