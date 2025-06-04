@@ -8,14 +8,16 @@ import (
 )
 
 type JWTClaim struct {
+	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Admin bool   `json:"admin"`
 	jwt.RegisteredClaims
 }
 
-func newJWTToken(name string, isAdmin bool) (string, error) {
+func newJWTToken(id string, name string, isAdmin bool) (string, error) {
 	secret := os.Getenv("JWT_SECRET")
 	claims := &JWTClaim{
+		id,
 		name,
 		isAdmin,
 		jwt.RegisteredClaims{

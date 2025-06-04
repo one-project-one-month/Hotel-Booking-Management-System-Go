@@ -12,6 +12,7 @@ import (
 type CreateBookingDto struct {
 	UserID        uuid.UUID `json:"userId" validate:"required,uuid"`
 	RoomID        uuid.UUID `json:"roomId" validate:"required,uuid"`
+	CheckInOutID  uuid.UUID `json:"checkInOutId"`
 	CheckIn       time.Time `json:"checkIn" validate:"required"`
 	CheckOut      time.Time `json:"checkOut" validate:"omitempty,gtfield=CheckIn"`
 	GuestCount    int       `json:"guestCount" validate:"required,gt=0"`
@@ -22,6 +23,7 @@ type CreateBookingDto struct {
 type UpdateBookingDto struct {
 	UserID        *uuid.UUID `json:"userId,omitempty" validate:"omitempty,uuid"`
 	RoomID        *uuid.UUID `json:"roomId,omitempty" validate:"omitempty,uuid"`
+	CheckInOutID  uuid.UUID  `json:"checkInOutId,omitempty" validate:"omitempty,uuid"`
 	CheckIn       *time.Time `json:"checkIn,omitempty" validate:"omitempty"`
 	CheckOut      *time.Time `json:"checkOut,omitempty" validate:"omitempty,gtfield=CheckIn"`
 	GuestCount    *int       `json:"guestCount,omitempty" validate:"omitempty,gt=0"`
@@ -34,6 +36,7 @@ type ResponseBookingDto struct {
 	ID            uuid.UUID `json:"id"`
 	UserID        uuid.UUID `json:"userId"`
 	RoomID        uuid.UUID `json:"roomId"`
+	CheckInOutID  uuid.UUID `json:"checkInOutId"`
 	CheckIn       time.Time `json:"checkIn"`
 	CheckOut      time.Time `json:"checkOut"`
 	GuestCount    int       `json:"guestCount"`
@@ -42,10 +45,11 @@ type ResponseBookingDto struct {
 	Status        string    `json:"status"`
 	CreatedAt     time.Time `json:"createdAt"`
 
-	UpdatedAt time.Time             `json:"updatedAt"`
-	DeletedAt *time.Time            `json:"deletedAt"`
-	User      *user.ResponseUserDto `json:"user"`
-	Room      *room.ResponseRoomDto `json:"room"`
+	UpdatedAt  time.Time             `json:"updatedAt"`
+	DeletedAt  *time.Time            `json:"deletedAt"`
+	User       *user.ResponseUserDto `json:"user"`
+	Room       *room.ResponseRoomDto `json:"room"`
+	CheckInOut *models.CheckInOut    `json:"checkInOut"`
 }
 
 func NewResponseDtoFromModel(booking *models.Booking) ResponseBookingDto {

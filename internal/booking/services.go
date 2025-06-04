@@ -1,10 +1,14 @@
 package booking
 
 import (
+	"errors"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/events"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/response"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/utils"
 )
 
@@ -16,16 +20,6 @@ type Service struct {
 
 func newService(repo *Repository, queue *mq.MQ) *Service {
 	s := &Service{repo: repo, queue: queue}
-
-	queue.Subscribe(events.BOOKINGFETCHED, func(data any) any {
-		dto := data.(events.FindByIdDto)
-		booking, err := s.getBookingByID(dto.ID)
-		if err != nil {
-			return nil
-		}
-
-		return booking
-	})
 
 	return s
 }
@@ -48,17 +42,41 @@ func (s *Service) getBookingByID(id uuid.UUID) (*ResponseBookingDto, error) {
 	return booking, nil
 }
 
-func (s *Service) createBooking(createBookingDto *CreateBookingDto) (*ResponseBookingDto, error) {
-	newUser, err := utils.MapStruct(&models.Booking{}, createBookingDto)
-	if err != nil {
-		return nil, err
-	}
-	createdBooking, err := s.repo.create(newUser)
+func (s *Service) createBooking(createBookingDto *CreateBookingDto) (*models.Booking, error) {
+	newBooking, err := utils.MapStruct(&models.Booking{}, createBookingDto)
 	if err != nil {
 		return nil, err
 	}
 
-	return createdBooking, nil
+	reply := s.queue.Publish(&mq.Message{
+		Topic: events.CHECKINOUTCREATED,
+		Data: &events.CreateCheckInOutDto{
+			CheckIn:     newBooking.CheckIn,
+			CheckOut:    newBooking.CheckOut,
+			Status:      "",
+			ExtraCharge: 0,
+		},
+	})
+
+	select {
+	case resp := <-reply:
+		data := resp.(*response.ServiceResponse)
+		if data.Error != nil {
+			return nil, data.Error
+		}
+
+		newBooking.CheckInOutID = data.Data.(*models.CheckInOut).ID
+		newBooking.CheckInOut = *data.Data.(*models.CheckInOut)
+	case <-time.After(10 * time.Second):
+		return nil, errors.New("timeout")
+	}
+
+	err = s.repo.create(newBooking)
+	if err != nil {
+		return nil, err
+	}
+
+	return newBooking, nil
 }
 
 func (s *Service) updateBooking(updateBookingDto *UpdateBookingDto, id uuid.UUID) (*ResponseBookingDto, error) {

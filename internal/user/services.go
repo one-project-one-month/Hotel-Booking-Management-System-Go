@@ -37,9 +37,9 @@ func newService(repo *Repository, queue *mq.MQ) *Service {
 	})
 
 	s.queue.Subscribe(events.USERCREATED, func(data any) any {
-		var user CreateUserDto
-		json.Unmarshal(data.([]byte), &user)
-		err := s.createUser(&user)
+		var userDto CreateUserDto
+		json.Unmarshal(data.([]byte), &userDto)
+		user, err := s.createUser(&userDto)
 		if err != nil {
 			return &response.ServiceResponse{
 				AppID: "UserService",
@@ -49,6 +49,7 @@ func newService(repo *Repository, queue *mq.MQ) *Service {
 
 		return &response.ServiceResponse{
 			AppID:   "UserService",
+			Data:    user,
 			Message: "User created successfully",
 		}
 	})
@@ -124,18 +125,18 @@ func (s *Service) getUserByPhoneNumber(phoneNumber string) (*models.User, error)
 	return user, nil
 }
 
-func (s *Service) createUser(userDto *CreateUserDto) error {
+func (s *Service) createUser(userDto *CreateUserDto) (*models.User, error) {
 	newUser, err := utils.MapStruct(&models.User{}, userDto)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = s.repo.create(newUser)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return newUser, nil
 }
 
 func (s *Service) updateUser(userDto *UpdateUserDto, id uuid.UUID) (*ResponseUserDto, error) {

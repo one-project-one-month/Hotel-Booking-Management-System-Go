@@ -49,7 +49,7 @@ func (s *Service) Signin(user *SignInUserDto) *response.ServiceResponse {
 		}
 	}
 
-	token, _ := newJWTToken(foundUser.Name, false)
+	token, _ := newJWTToken(foundUser.ID.String(), foundUser.Name, false)
 
 	return &response.ServiceResponse{
 		AppID: "AuthService",
@@ -127,9 +127,11 @@ func (s *Service) Signup(user *SignUpUserDto) *response.ServiceResponse {
 		Data:  userJson,
 	})
 
+	var createdUser *models.User
 	select {
 	case resp := <-reply:
 		data := resp.(*response.ServiceResponse)
+		createdUser = data.Data.(*models.User)
 		if data.Error != nil {
 			return &response.ServiceResponse{
 				AppID:   "AuthService",
@@ -145,7 +147,7 @@ func (s *Service) Signup(user *SignUpUserDto) *response.ServiceResponse {
 		}
 	}
 
-	token, _ := newJWTToken(user.Name, false)
+	token, _ := newJWTToken(createdUser.ID.String(), createdUser.Name, false)
 	return &response.ServiceResponse{
 		AppID: "AuthService",
 		Data: &SignUpResponseDto{

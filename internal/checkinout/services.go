@@ -2,10 +2,8 @@ package checkinout
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
-	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/internal/booking"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/events"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
@@ -26,41 +24,30 @@ type service struct {
 }
 
 func NewService(repo Repository, queue *mq.MQ) Service {
-	return &service{repo: repo, queue: queue}
+	s := &service{repo: repo, queue: queue}
+
+	s.queue.Subscribe(events.CHECKINOUTCREATED, func(data any) any {
+		dto := data.(*events.CreateCheckInOutDto)
+
+		result := s.Create(context.Background(), CreateCheckInOutDto{
+			CheckIn:     dto.CheckIn,
+			CheckOut:    dto.CheckOut,
+			Status:      dto.Status,
+			ExtraCharge: dto.ExtraCharge,
+		})
+
+		return &result
+	})
+
+	return s
 }
 
 func (s *service) Create(ctx context.Context, dto CreateCheckInOutDto) response.ServiceResponse {
-	reply := s.queue.Publish(&mq.Message{
-		AppID: "CheckInOutService",
-		Topic: events.BOOKINGFETCHED,
-		Data:  events.FindByIdDto{ID: dto.BookingID},
-	})
-
-	var data any
-	select {
-	case data = <-reply:
-		if data == nil {
-			return response.ServiceResponse{
-				AppID:   "CheckInOutService",
-				Error:   response.ErrBadRequest,
-				Message: "Invalid Booking ID!",
-			}
-		}
-	case <-time.After(1 * time.Second):
-		return response.ServiceResponse{
-			AppID:   "CheckInOutService",
-			Error:   response.ErrInternalServer,
-			Message: "Timeout!",
-		}
-	}
-
-	booking := data.(*booking.ResponseBookingDto)
 	checkInOut := &models.CheckInOut{
-		CheckIn:     booking.CheckIn,
-		CheckOut:    booking.CheckOut,
+		CheckIn:     dto.CheckIn,
+		CheckOut:    dto.CheckOut,
 		Status:      dto.Status,
 		ExtraCharge: dto.ExtraCharge,
-		BookingID:   dto.BookingID,
 	}
 
 	if err := s.repo.Create(ctx, checkInOut); err != nil {
@@ -74,7 +61,7 @@ func (s *service) Create(ctx context.Context, dto CreateCheckInOutDto) response.
 	return response.ServiceResponse{
 		AppID:   "CheckInOutService",
 		Message: "Success!",
-		Data:    NewResponseDtoFromModel(checkInOut),
+		Data:    checkInOut,
 	}
 }
 
@@ -91,7 +78,7 @@ func (s *service) GetByID(ctx context.Context, id uuid.UUID) response.ServiceRes
 	return response.ServiceResponse{
 		AppID:   "CheckInOutService",
 		Message: "Success!",
-		Data:    NewResponseDtoFromModel(checkInOut),
+		Data:    checkInOut,
 	}
 }
 
@@ -105,9 +92,9 @@ func (s *service) GetAll(ctx context.Context) response.ServiceResponse {
 		}
 	}
 
-	responses := make([]ResponseCheckInOutDto, len(checkInOuts))
+	responses := make([]*models.CheckInOut, len(checkInOuts))
 	for i, checkInOut := range checkInOuts {
-		responses[i] = NewResponseDtoFromModel(&checkInOut)
+		responses[i] = &checkInOut
 	}
 
 	return response.ServiceResponse{
@@ -133,14 +120,12 @@ func (s *service) Update(ctx context.Context, id uuid.UUID, dto UpdateCheckInOut
 	if dto.CheckOut != nil {
 		checkInOut.CheckOut = *dto.CheckOut
 	}
-	if dto.Status != nil {
-		checkInOut.Status = *dto.Status
+
+	if dto.Status != "" {
+		checkInOut.Status = dto.Status
 	}
-	if dto.ExtraCharge != nil {
-		checkInOut.ExtraCharge = *dto.ExtraCharge
-	}
-	if dto.BookingID != nil {
-		checkInOut.BookingID = *dto.BookingID
+	if dto.ExtraCharge != 0 {
+		checkInOut.ExtraCharge = dto.ExtraCharge
 	}
 
 	if err := s.repo.Update(ctx, checkInOut); err != nil {
@@ -154,7 +139,7 @@ func (s *service) Update(ctx context.Context, id uuid.UUID, dto UpdateCheckInOut
 	return response.ServiceResponse{
 		AppID:   "CheckInOutService",
 		Message: "Success!",
-		Data:    NewResponseDtoFromModel(checkInOut),
+		Data:    checkInOut,
 	}
 }
 

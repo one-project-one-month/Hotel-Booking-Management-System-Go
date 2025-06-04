@@ -1,6 +1,10 @@
 package events
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type FindByUserIdDto struct {
 	UserID string
@@ -20,4 +24,22 @@ type FindByAccountNumberDto struct {
 
 type FindByPhoneNumberDto struct {
 	PhoneNumber string
+}
+
+type UpdateBookingDto struct {
+	ID            uuid.UUID
+	CheckInOutID  uuid.UUID
+	CheckIn       *time.Time
+	CheckOut      *time.Time
+	GuestCount    int
+	Status        string
+	DepositAmount float64
+	TotalAmount   float64
+}
+
+type CreateCheckInOutDto struct {
+	CheckIn     time.Time
+	CheckOut    time.Time
+	Status      string
+	ExtraCharge float64
 }

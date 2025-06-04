@@ -118,5 +118,4 @@ func (r *Repository) getRoomByGuestLimit(guests int) ([]ResponseRoomDto, error) 
 		response[i] = resRoom
 	}
 	return response, nil
-
 }

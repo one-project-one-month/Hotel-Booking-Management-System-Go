@@ -3,9 +3,9 @@ package coupon
 import "github.com/google/uuid"
 
 type CreateCouponDto struct {
-	Discounts  float64 `json:"discounts" validate:"min=1"`
+	Discount   float64 `json:"discount" validate:"min=1"`
 	ExpiryDate string  `json:"expiry_date" validate:"required,datetime=2006-01-02T15:04:05Z"`
-	UserID     string  `json:"user_id" validate:"uuid4"`
+	UserID     string  `json:"user_id" validate:"required,uuid4"`
 }
 
 type FindListCouponDto struct {

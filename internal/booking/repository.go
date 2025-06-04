@@ -16,7 +16,7 @@ func newRepository(db *gorm.DB) *Repository {
 
 func (r *Repository) findAll() (*[]ResponseBookingDto, error) {
 	var bookings []models.Booking
-	if err := r.db.Preload("User").Preload("Room").Find(&bookings).Error; err != nil {
+	if err := r.db.Preload("User").Preload("Room").Preload("CheckInOut").Find(&bookings).Error; err != nil {
 		return nil, err
 	}
 
@@ -37,15 +37,8 @@ func (r *Repository) findByID(id uuid.UUID) (*ResponseBookingDto, error) {
 	return &response, nil
 }
 
-func (r *Repository) create(booking *models.Booking) (*ResponseBookingDto, error) {
-	result := r.db.Create(&booking)
-	if err := result.Error; err != nil {
-		return nil, err
-	}
-
-	response := NewResponseDtoFromModel(booking)
-
-	return &response, nil
+func (r *Repository) create(booking *models.Booking) error {
+	return r.db.Create(&booking).Error
 }
 
 func (r *Repository) update(booking *models.Booking, id uuid.UUID) (*ResponseBookingDto, error) {

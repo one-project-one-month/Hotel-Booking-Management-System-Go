@@ -54,37 +54,76 @@ func Seed(db *gorm.DB) error {
 	}
 
 	const batchSize = 40
-	bookings := make([]models.Booking, batchSize)
 	now := time.Now()
 
-	for i := 0; i < batchSize; i++ {
-		seq := i + 1
-		// Use existing room and user IDs with modulo to cycle through them
-		roomID := roomIDs[i%len(roomIDs)]
-		userID := userIDs[i%len(userIDs)]
-
-		bookings[i] = models.Booking{
-			UserID:        userID,
-			RoomID:        roomID,
-			CheckIn:       now.AddDate(0, 0, seq*7),
-			GuestCount:    seq%4 + 1,
-			DepositAmount: float64(seq * 10),
-			TotalAmount:   float64(seq * 100),
-			Status:        "pending",
-			CreatedAt:     now,
-			UpdatedAt:     now,
+	// Start a transaction to ensure all operations succeed or fail together
+	err := db.Transaction(func(tx *gorm.DB) error {
+		// First create the CheckInOut records
+		checkInOuts := make([]models.CheckInOut, batchSize)
+		for i := 0; i < batchSize; i++ {
+			seq := i + 1
+			checkInDate := now.AddDate(0, 0, seq*7)
+			// Set a default check-out date 3 days after check-in
+			checkOutDate := checkInDate.AddDate(0, 0, 3)
+			
+			checkInOuts[i] = models.CheckInOut{
+				CheckIn:     checkInDate,
+				CheckOut:    checkOutDate,
+				Status:      "pending",
+				ExtraCharge: 0, // No extra charges for new bookings
+				CreatedAt:   now,
+				UpdatedAt:   now,
+			}
 		}
+
+		// Create all CheckInOut records
+		if result := tx.Create(&checkInOuts); result.Error != nil {
+			return fmt.Errorf("failed to seed check-in/check-out records: %w", result.Error)
+		}
+
+		// Now create the bookings with references to the CheckInOut records
+		bookings := make([]models.Booking, batchSize)
+		for i := 0; i < batchSize; i++ {
+			seq := i + 1
+			// Use existing room and user IDs with modulo to cycle through them
+			roomID := roomIDs[i%len(roomIDs)]
+			userID := userIDs[i%len(userIDs)]
+
+			bookings[i] = models.Booking{
+				UserID:        userID,
+				RoomID:        roomID,
+				CheckIn:       checkInOuts[i].CheckIn,
+				CheckOut:      checkInOuts[i].CheckOut,
+				GuestCount:    seq%4 + 1,
+				DepositAmount: float64(seq * 10),
+				TotalAmount:   float64(seq * 100),
+				Status:        "pending",
+				CreatedAt:     now,
+				UpdatedAt:     now,
+				CheckInOutID:  checkInOuts[i].ID, // Link to the corresponding CheckInOut record
+			}
+		}
+
+		// Create all booking records
+		if result := tx.Create(&bookings); result.Error != nil {
+			return fmt.Errorf("failed to seed bookings: %w", result.Error)
+		}
+
+		if result := tx.Model(&models.Booking{}).Count(&count); result.Error != nil {
+			return fmt.Errorf("failed to verify bookings count: %w", result.Error)
+		}
+
+		if count != int64(batchSize) {
+			return fmt.Errorf("expected to seed %d bookings, but only %d were inserted", batchSize, count)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return err
 	}
 
-	result := db.Create(&bookings)
-	if result.Error != nil {
-		return fmt.Errorf("failed to seed bookings: %w", result.Error)
-	}
-
-	if result.RowsAffected != int64(batchSize) {
-		return fmt.Errorf("expected to seed %d bookings, but only %d were inserted", batchSize, result.RowsAffected)
-	}
-
-	fmt.Printf("successfully seeded %d bookings\n", batchSize)
+	fmt.Printf("successfully seeded %d bookings with check-in/check-out records\n", batchSize)
 	return nil
 }

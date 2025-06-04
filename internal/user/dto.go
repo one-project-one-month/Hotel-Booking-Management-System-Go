@@ -39,6 +39,7 @@ type ResponseUserDto struct {
 	DeletedAt   *time.Time       `json:"deletedAt"`
 	Bookings    []models.Booking `json:"bookings,omitempty"`
 }
+
 func NewResponseDtoFromModel(user *models.User) ResponseUserDto {
 	var deletedAt *time.Time
 	if user.DeletedAt.Valid {

@@ -32,4 +32,7 @@ type Booking struct {
 	// Room          Room           `gorm:"foreignKey:RoomID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT" json:"room"`
 	User User `json:"-" gorm:"foreignKey:UserID"`
 	Room Room `json:"-" gorm:"foreignKey:RoomID"`
+
+	CheckInOutID uuid.UUID  `json:"checkinout_id"`
+	CheckInOut   CheckInOut `gorm:"ForeignKey:CheckInOutID;constraint:OnUpdate=CASCADE,OnDelete=SET NULL"`
 }
