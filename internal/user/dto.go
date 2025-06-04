@@ -49,9 +49,9 @@ func NewResponseDtoFromModel(user *models.User) ResponseUserDto {
 	bookings := make([]models.Booking, len(user.Bookings))
 	for i, booking := range user.Bookings {
 		bookings[i] = booking
-		// Clear nested relationships to avoid circular references
-		bookings[i].User = models.User{}
-		bookings[i].Room = models.Room{}
+		// // Clear nested relationships to avoid circular references
+		// bookings[i].User = models.User{}
+		// bookings[i].Room = models.Room{}
 	}
 
 	return ResponseUserDto{
