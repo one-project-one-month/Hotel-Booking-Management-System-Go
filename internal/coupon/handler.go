@@ -42,6 +42,11 @@ func (h *Handler) create(c echo.Context) error {
 	}
 
 	if resp := h.service.create(&coupon); resp.Error != nil {
+		if errors.Is(resp.Error, response.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, response.HTTPErrorResponse{
+				Message: resp.Message,
+			})
+		}
 		return c.JSON(http.StatusInternalServerError, response.HTTPErrorResponse{
 			Message: "Failed to create coupon",
 			Error:   resp.Error,
@@ -50,7 +55,6 @@ func (h *Handler) create(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, response.HTTPSuccessResponse{
 		Message: "Coupon created successfully",
-		Data:    nil,
 	})
 }
 
@@ -113,12 +117,6 @@ func (h *Handler) update(c echo.Context) error {
 	}
 
 	if err := c.Validate(coupon); err != nil {
-		return c.JSON(http.StatusBadRequest, response.HTTPErrorResponse{
-			Message: err.Error(),
-		})
-	}
-
-	if err := c.Validate(coupon.Data); err != nil {
 		return c.JSON(http.StatusBadRequest, response.HTTPErrorResponse{
 			Message: err.Error(),
 		})

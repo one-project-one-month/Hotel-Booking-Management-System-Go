@@ -167,7 +167,8 @@ func (s *Service) update(id string, coupon *UpdateCouponDto) *response.ServiceRe
 	}
 
 	return &response.ServiceResponse{
-		AppID: "CouponService",
+		AppID:   "CouponService",
+		Message: "Coupon updated successfully",
 	}
 }
 

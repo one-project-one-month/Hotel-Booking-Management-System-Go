@@ -20,6 +20,5 @@ type UpdateCouponDataDto struct {
 }
 
 type UpdateCouponDto struct {
-	Method string              `json:"method" validate:"required,oneof=claim activate"`
-	Data   UpdateCouponDataDto `json:"data" validate:"required"`
+	Method string `json:"method" validate:"required,oneof=claim activate"`
 }
