@@ -24,7 +24,7 @@ type Booking struct {
 	DepositAmount float64   `gorm:"not null;default:0" json:"deposit_amount" validate:"gte=0"`
 
 	TotalAmount float64        `gorm:"not null" json:"total_amount" validate:"gt=0"`
-	Status      Status         `gorm:"type:varchar(20);default='pending';null" json:"status" validate:"oneof=pending approved"`
+	Status      Status         `gorm:"type:varchar(20);default:pending;null" json:"status" validate:"oneof=pending approved"`
 	CreatedAt   time.Time      `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt   time.Time      `gorm:"autoUpdateTime" json:"updated_at"`
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deleted_at"`
