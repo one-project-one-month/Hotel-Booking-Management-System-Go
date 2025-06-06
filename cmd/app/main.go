@@ -37,7 +37,7 @@ func main() {
 
 	auth.Run(app.echo, queue)
 	user.Run(app.echo, db, queue, cfg)
-	room.Run(app.echo, db, cfg)
+	room.Run(app.echo, db, cfg, queue)
 	coupon.Run(app.echo, db, queue)
 	booking.Run(app.echo, db, queue)
 	checkinout.Run(app.echo, db, queue)

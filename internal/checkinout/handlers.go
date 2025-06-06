@@ -19,7 +19,6 @@ func NewHandler(service Service) *Handler {
 func (h *Handler) RegisterRoutes(e *echo.Echo) {
 	checkInOut := e.Group("/api/v1/check-in-out")
 	{
-		checkInOut.POST("", h.Create)
 		checkInOut.GET("", h.GetAll)
 		checkInOut.GET("/:id", h.GetByID)
 		checkInOut.PATCH("/:id", h.Update)

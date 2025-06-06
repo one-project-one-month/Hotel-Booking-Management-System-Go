@@ -71,12 +71,19 @@ func (h *Handler) createBooking(ctx echo.Context) error {
 			Error:   err,
 		})
 	}
-	createdBooking, err := h.service.createBooking(&newBooking)
-	if err != nil {
+	createdBooking := h.service.createBooking(&newBooking)
+
+	if createdBooking.Error != nil {
+		if createdBooking.Error == response.ErrNotFound {
+			return ctx.JSON(http.StatusNotFound, &response.HTTPErrorResponse{
+				Message: createdBooking.Message,
+			})
+		}
+
 		return ctx.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
 			Message: "Create Booking Failed!",
-			Error:   err,
 		})
+
 	}
 
 	return ctx.JSON(http.StatusCreated, &response.HTTPSuccessResponse{

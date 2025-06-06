@@ -3,17 +3,18 @@ package room
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/config"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
 	"gorm.io/gorm"
 )
 
 // Run Entry Point For Room Feature
-func Run(e *echo.Echo, db *gorm.DB, cfg *config.Config) {
+func Run(e *echo.Echo, db *gorm.DB, cfg *config.Config, queue *mq.MQ) {
 	if err := Seed(db); err != nil {
 		e.Logger.Fatal(err)
 	}
 
 	repo := newRepository(db)
-	service := newService(repo)
+	service := newService(repo, queue)
 	handler := newHandler(service)
 
 	g := e.Group("/api/v1/room")

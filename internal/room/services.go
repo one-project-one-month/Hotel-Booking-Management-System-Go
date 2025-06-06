@@ -6,16 +6,37 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/events"
 	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/models"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/mq"
+	"github.com/one-project-one-month/Hotel-Booking-Management-System-Go/pkg/response"
 )
 
 // Service
 type Service struct {
-	repo *Repository
+	queue *mq.MQ
+	repo  *Repository
 }
 
-func newService(repo *Repository) *Service {
-	return &Service{repo: repo}
+func newService(repo *Repository, queue *mq.MQ) *Service {
+	s := &Service{repo: repo, queue: queue}
+
+	s.queue.Subscribe(events.ROOMFINDBYID, func(data any) any {
+		id := data.(*events.FindByIdDto).ID
+		room, err := s.repo.findByID(id)
+		if err != nil {
+			return &response.ServiceResponse{
+				AppID: "RoomService",
+				Error: err,
+			}
+		}
+		return &response.ServiceResponse{
+			AppID: "RoomService",
+			Data:  room,
+		}
+	})
+
+	return s
 }
 
 func (s *Service) findAllRooms() ([]ResponseRoomDto, error) {

@@ -30,7 +30,7 @@ func (r *repository) Create(ctx context.Context, checkInOut *models.CheckInOut) 
 
 func (r *repository) FindByID(ctx context.Context, id uuid.UUID) (*models.CheckInOut, error) {
 	var checkInOut models.CheckInOut
-	err := r.db.WithContext(ctx).Preload("Booking").First(&checkInOut, "id = ?", id).Error
+	err := r.db.WithContext(ctx).First(&checkInOut, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (r *repository) FindByID(ctx context.Context, id uuid.UUID) (*models.CheckI
 
 func (r *repository) FindAll(ctx context.Context) ([]models.CheckInOut, error) {
 	var checkInOuts []models.CheckInOut
-	err := r.db.WithContext(ctx).Preload("Booking").Find(&checkInOuts).Error
+	err := r.db.WithContext(ctx).Find(&checkInOuts).Error
 	if err != nil {
 		return nil, err
 	}

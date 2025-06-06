@@ -14,17 +14,17 @@ func newRepository(db *gorm.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) findAll() (*[]ResponseBookingDto, error) {
+func (r *Repository) findAll() ([]*ResponseBookingDto, error) {
 	var bookings []models.Booking
 	if err := r.db.Preload("User").Preload("Room").Preload("CheckInOut").Find(&bookings).Error; err != nil {
 		return nil, err
 	}
 
-	response := make([]ResponseBookingDto, len(bookings))
+	response := make([]*ResponseBookingDto, len(bookings))
 	for i, booking := range bookings {
 		response[i] = NewResponseDtoFromModel(&booking)
 	}
-	return &response, nil
+	return response, nil
 }
 
 func (r *Repository) findByID(id uuid.UUID) (*ResponseBookingDto, error) {
@@ -33,8 +33,7 @@ func (r *Repository) findByID(id uuid.UUID) (*ResponseBookingDto, error) {
 		return nil, err
 	}
 
-	response := NewResponseDtoFromModel(&booking)
-	return &response, nil
+	return NewResponseDtoFromModel(&booking), nil
 }
 
 func (r *Repository) create(booking *models.Booking) error {
@@ -51,8 +50,7 @@ func (r *Repository) update(booking *models.Booking, id uuid.UUID) (*ResponseBoo
 		return nil, err
 	}
 
-	response := NewResponseDtoFromModel(&existingBooking)
-	return &response, nil
+	return NewResponseDtoFromModel(&existingBooking), nil
 }
 
 func (r *Repository) delete(id uuid.UUID) error {

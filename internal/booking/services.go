@@ -1,7 +1,7 @@
 package booking
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,11 +20,10 @@ type Service struct {
 
 func newService(repo *Repository, queue *mq.MQ) *Service {
 	s := &Service{repo: repo, queue: queue}
-
 	return s
 }
 
-func (s *Service) findAllBookings() (*[]ResponseBookingDto, error) {
+func (s *Service) findAllBookings() ([]*ResponseBookingDto, error) {
 	bookings, err := s.repo.findAll()
 	if err != nil {
 		return nil, err
@@ -42,10 +41,60 @@ func (s *Service) getBookingByID(id uuid.UUID) (*ResponseBookingDto, error) {
 	return booking, nil
 }
 
-func (s *Service) createBooking(createBookingDto *CreateBookingDto) (*models.Booking, error) {
-	newBooking, err := utils.MapStruct(&models.Booking{}, createBookingDto)
-	if err != nil {
-		return nil, err
+func (s *Service) createBooking(createBookingDto *CreateBookingDto) *response.ServiceResponse {
+	newBooking, _ := utils.MapStruct(&models.Booking{}, createBookingDto)
+	userReply := s.queue.Publish(&mq.Message{
+		Topic: events.USERFINDBYID,
+		Data: &events.FindByIdDto{
+			ID: newBooking.UserID,
+		},
+	})
+
+	select {
+	case resp := <-userReply:
+		data := resp.(*response.ServiceResponse)
+		if data.Data == nil {
+			return &response.ServiceResponse{
+				AppID:   "BookingService",
+				Error:   response.ErrNotFound,
+				Message: fmt.Sprintf("user with id %s not found", newBooking.UserID.String()),
+			}
+		}
+	case <-time.Tick(2 * time.Second):
+		return &response.ServiceResponse{
+			AppID:   "BookingService",
+			Error:   response.ErrTimeout,
+			Message: "timeout",
+		}
+	}
+
+	roomReply := s.queue.Publish(&mq.Message{
+		Topic: events.ROOMFINDBYID,
+		Data: &events.FindByIdDto{
+			ID: newBooking.RoomID,
+		},
+	})
+
+	select {
+	case resp := <-roomReply:
+		data := resp.(*response.ServiceResponse)
+		if data.Data == nil {
+			return &response.ServiceResponse{
+				AppID:   "BookingService",
+				Error:   response.ErrNotFound,
+				Message: fmt.Sprintf("room with id %s not found", newBooking.RoomID.String()),
+			}
+		}
+	case <-time.Tick(2 * time.Second):
+		return &response.ServiceResponse{
+			AppID:   "BookingService",
+			Error:   response.ErrTimeout,
+			Message: "timeout",
+		}
+	}
+
+	if newBooking.Status == "" {
+		newBooking.Status = "pending"
 	}
 
 	reply := s.queue.Publish(&mq.Message{
@@ -53,7 +102,7 @@ func (s *Service) createBooking(createBookingDto *CreateBookingDto) (*models.Boo
 		Data: &events.CreateCheckInOutDto{
 			CheckIn:     newBooking.CheckIn,
 			CheckOut:    newBooking.CheckOut,
-			Status:      "",
+			Status:      string(newBooking.Status),
 			ExtraCharge: 0,
 		},
 	})
@@ -62,21 +111,37 @@ func (s *Service) createBooking(createBookingDto *CreateBookingDto) (*models.Boo
 	case resp := <-reply:
 		data := resp.(*response.ServiceResponse)
 		if data.Error != nil {
-			return nil, data.Error
+			return &response.ServiceResponse{
+				AppID:   "BookingService",
+				Error:   data.Error,
+				Message: data.Message,
+			}
 		}
 
 		newBooking.CheckInOutID = data.Data.(*models.CheckInOut).ID
 		newBooking.CheckInOut = *data.Data.(*models.CheckInOut)
-	case <-time.After(10 * time.Second):
-		return nil, errors.New("timeout")
+	case <-time.After(2 * time.Second):
+		return &response.ServiceResponse{
+			AppID:   "BookingService",
+			Error:   response.ErrTimeout,
+			Message: "timeout",
+		}
 	}
 
-	err = s.repo.create(newBooking)
+	err := s.repo.create(newBooking)
 	if err != nil {
-		return nil, err
+		return &response.ServiceResponse{
+			AppID:   "BookingService",
+			Error:   err,
+			Message: "failed to create booking",
+		}
 	}
 
-	return newBooking, nil
+	return &response.ServiceResponse{
+		AppID:   "BookingService",
+		Data:    newBooking,
+		Message: "booking created successfully",
+	}
 }
 
 func (s *Service) updateBooking(updateBookingDto *UpdateBookingDto, id uuid.UUID) (*ResponseBookingDto, error) {

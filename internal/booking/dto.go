@@ -52,7 +52,7 @@ type ResponseBookingDto struct {
 	CheckInOut *models.CheckInOut    `json:"checkInOut"`
 }
 
-func NewResponseDtoFromModel(booking *models.Booking) ResponseBookingDto {
+func NewResponseDtoFromModel(booking *models.Booking) *ResponseBookingDto {
 	var deletedAt *time.Time
 	if booking.DeletedAt.Valid {
 		deletedAt = &booking.DeletedAt.Time
@@ -70,10 +70,16 @@ func NewResponseDtoFromModel(booking *models.Booking) ResponseBookingDto {
 		roomDto = &roomResp
 	}
 
-	return ResponseBookingDto{
+	var checkInOutDto *models.CheckInOut
+	if booking.CheckInOutID != uuid.Nil {
+		checkInOutDto = &booking.CheckInOut
+	}
+
+	return &ResponseBookingDto{
 		ID:            booking.ID,
 		UserID:        booking.UserID,
 		RoomID:        booking.RoomID,
+		CheckInOutID:  booking.CheckInOutID,
 		CheckIn:       booking.CheckIn,
 		CheckOut:      booking.CheckOut,
 		GuestCount:    booking.GuestCount,
@@ -85,5 +91,6 @@ func NewResponseDtoFromModel(booking *models.Booking) ResponseBookingDto {
 		DeletedAt:     deletedAt,
 		User:          userDto,
 		Room:          roomDto,
+		CheckInOut:    checkInOutDto,
 	}
 }

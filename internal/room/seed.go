@@ -36,7 +36,6 @@ func Seed(db *gorm.DB) error {
 	var seeds []RequestRoomDto
 	if err := json.NewDecoder(file).Decode(&seeds); err != nil {
 		panic(err)
-		return err
 	}
 
 	for _, s := range seeds {
