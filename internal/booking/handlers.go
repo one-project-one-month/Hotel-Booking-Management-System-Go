@@ -77,6 +77,7 @@ func (h *Handler) createBooking(ctx echo.Context) error {
 		if createdBooking.Error == response.ErrNotFound {
 			return ctx.JSON(http.StatusNotFound, &response.HTTPErrorResponse{
 				Message: createdBooking.Message,
+				Error:   createdBooking.Error,
 			})
 		}
 
