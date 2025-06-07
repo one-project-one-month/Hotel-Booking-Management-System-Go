@@ -54,7 +54,7 @@ func (s *service) Create(ctx context.Context, dto CreateCheckInOutDto) response.
 		return response.ServiceResponse{
 			AppID:   "CheckInOutService",
 			Error:   response.ErrInternalServer,
-			Message: "Create Check-in/out Failed!",
+			Message: err.Error(),
 		}
 	}
 

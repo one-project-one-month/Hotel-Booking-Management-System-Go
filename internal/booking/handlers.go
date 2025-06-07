@@ -82,7 +82,8 @@ func (h *Handler) createBooking(ctx echo.Context) error {
 		}
 
 		return ctx.JSON(http.StatusInternalServerError, &response.HTTPErrorResponse{
-			Message: createdBooking.Error.Error(),
+			Message: createdBooking.Message,
+			Error:   createdBooking.Error,
 		})
 
 	}
